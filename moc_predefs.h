@@ -66,16 +66,17 @@
 #define __GXX_WEAK__ 1
 #define __LDBL_MIN__ 3.36210314311209350626e-4932L
 #define __DEC32_MAX__ 9.999999E96DF
+#define __cpp_threadsafe_static_init 200806
 #define __INT32_MAX__ 0x7fffffff
 #define __SIZEOF_LONG__ 8
 #define __STDC_IEC_559__ 1
-#define __STDC_ISO_10646__ 201605L
+#define __STDC_ISO_10646__ 201706L
 #define __UINT16_C(c) c
 #define __DECIMAL_DIG__ 21
 #define __gnu_linux__ 1
 #define __has_include_next(STR) __has_include_next__(STR)
 #define __LDBL_HAS_QUIET_NAN__ 1
-#define __GNUC__ 6
+#define __GNUC__ 5
 #define __GXX_RTTI 1
 #define __pie__ 2
 #define __MMX__ 1
@@ -107,16 +108,15 @@
 #define __amd64 1
 #define __STDC_NO_THREADS__ 1
 #define __ATOMIC_HLE_ACQUIRE 65536
-#define __GNUG__ 6
+#define __GNUG__ 5
 #define __LONG_LONG_MAX__ 0x7fffffffffffffffLL
 #define __SIZEOF_SIZE_T__ 8
 #define __cpp_rvalue_reference 200610
 #define __cpp_nsdmi 200809
 #define __SIZEOF_WINT_T__ 4
 #define __cpp_initializer_lists 200806
-#define __cpp_hex_float 201603
 #define __GCC_HAVE_DWARF2_CFI_ASM 1
-#define __GXX_ABI_VERSION 1010
+#define __GXX_ABI_VERSION 1009
 #define __FLT_MIN_EXP__ (-125)
 #define __cpp_lambdas 200907
 #define __INT_FAST64_TYPE__ long int
@@ -131,7 +131,7 @@
 #define __UINT8_TYPE__ unsigned char
 #define __NO_INLINE__ 1
 #define __FLT_MANT_DIG__ 24
-#define __VERSION__ "6.3.0 20170406"
+#define __VERSION__ "5.5.0 20171010"
 #define __UINT64_C(c) c ## UL
 #define __cpp_unicode_characters 200704
 #define _STDC_PREDEF_H 1
@@ -151,7 +151,6 @@
 #define __UINT64_MAX__ 0xffffffffffffffffUL
 #define __INT8_TYPE__ signed char
 #define __ELF__ 1
-#define __GCC_ASM_FLAG_OUTPUTS__ 1
 #define __FLT_RADIX__ 2
 #define __INT_LEAST16_TYPE__ short int
 #define __LDBL_EPSILON__ 1.08420217248550443401e-19L
@@ -176,11 +175,9 @@
 #define __DEC64_MAX__ 9.999999999999999E384DD
 #define __CHAR16_TYPE__ short unsigned int
 #define __PRAGMA_REDEFINE_EXTNAME 1
-#define __SEG_FS 1
 #define __INT_LEAST16_MAX__ 0x7fff
 #define __DEC64_MANT_DIG__ 16
 #define __UINT_LEAST32_MAX__ 0xffffffffU
-#define __SEG_GS 1
 #define __GCC_ATOMIC_LONG_LOCK_FREE 2
 #define __INT_LEAST64_TYPE__ long int
 #define __INT16_TYPE__ short int
@@ -258,7 +255,7 @@
 #define __INTMAX_TYPE__ long int
 #define __DEC128_MAX_EXP__ 6145
 #define __ATOMIC_CONSUME 1
-#define __GNUC_MINOR__ 3
+#define __GNUC_MINOR__ 5
 #define __GLIBCXX_TYPE_INT_N_0 __int128
 #define __UINTMAX_MAX__ 0xffffffffffffffffUL
 #define __DEC32_MANT_DIG__ 7

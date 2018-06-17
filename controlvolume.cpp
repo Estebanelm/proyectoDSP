@@ -33,6 +33,7 @@ using namespace std;
 #define REAL 0
 #define IMAG 1
 #define PI 3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128481
+#define N 2048
 
 /*
  * Constructor
@@ -40,31 +41,31 @@ using namespace std;
 controlVolume::controlVolume(){
 
     //Inicializacion de los punteros de tipo double[2048][2].
-    f32 = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * 2048);
-    f64 = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * 2048);
-    f125 = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)* 2048);
-    f250 = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)* 2048);
-    f500 = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)* 2048);
-    f1k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * 2048);
-    f2k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * 2048);
-    f4k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * 2048);
-    f8k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * 2048);
-    f16k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)* 2048);
+    f32 = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+    f64 = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+    f125 = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)* N);
+    f250 = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)* N);
+    f500 = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)* N);
+    f1k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+    f2k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+    f4k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+    f8k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+    f16k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)* N);
 
     //valor booleano que indica el inicio de una cancion.
     inicio = true;
 
     // Arreglos donde se almacenan los M-1 valores de la salida que se generan al aplicar el metodo de solapamiento y suma.
-    datos32 = new float[1024];
-    datos64 = new float[1024];
-    datos125 = new float[1024];
-    datos250 = new float[1024];
-    datos500 = new float[1024];
-    datos1k = new float[1024];
-    datos2k = new float[1024];
-    datos4k = new float[1024];
-    datos8k = new float[1024];
-    datos16k = new float[1024];
+    datos32 = new float[N-1024];
+    datos64 = new float[N-1024];
+    datos125 = new float[N-1024];
+    datos250 = new float[N-1024];
+    datos500 = new float[N-1024];
+    datos1k = new float[N-1024];
+    datos2k = new float[N-1024];
+    datos4k = new float[N-1024];
+    datos8k = new float[N-1024];
+    datos16k = new float[N-1024];
 
     //Inicializacion de los valores en los punteros de tipo double[2048][2]
     inicializarH32();
@@ -104,7 +105,7 @@ controlVolume::~controlVolume(){
  */
 void controlVolume::inicializarHK(fftw_complex *puntero, double G, double a_0, double b_0, double c_0, double e_0, double f_0, double g_0, double b_1, double c_1, double d_1, double e_1, double f_1, double g_1){
 
-    int N = 2048; //Largo del enventanado. Esto hay que cambiarlo porque es el doble del tamaño de la entrada, entonces solapamiento y almacenamiento significaría utilizar toda la entrada anterior
+    //int N = 2048; //Largo del enventanado. Esto hay que cambiarlo porque es el doble del tamaño de la entrada, entonces solapamiento y almacenamiento significaría utilizar toda la entrada anterior
     //aunque creo que igual se puede hacer con la entrada anterior completa, no veo el problema en realidad.
 
     fftw_complex *h = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
@@ -126,7 +127,7 @@ void controlVolume::inicializarHK(fftw_complex *puntero, double G, double a_0, d
     h[6][REAL] = G * g_0 + b_1 * h[5][REAL] + c_1 * h[4][REAL] + d_1 * h[3][REAL] + e_1 * h[2][REAL] + f_1 * h[1][REAL] + g_1 * h[0][REAL];
 
     //De h(7) en adelante solo depende de las salidas anteriores. Por lo que recursivamente se calculan los demas valores.
-    for(int i = 7; i<1025; i++){
+    for(int i = 7; i<1024; i++){
 
 
         h[i][REAL] = b_1 * h[i-1][REAL] + c_1 * h[i-2][REAL] + d_1 * h[i-3][REAL] + e_1 * h[i-4][REAL] + f_1 * h[i-5][REAL] + g_1 * h[i-6][REAL];
@@ -134,7 +135,7 @@ void controlVolume::inicializarHK(fftw_complex *puntero, double G, double a_0, d
     }
 
     //Se agregan ceros hasta que el largo de h(n) sea igual a L+M-1 = 2048.
-    for(int i = 1025;i<N;i++){
+    for(int i = 1024;i<N;i++){
 
         h[i][REAL] = 0.0;
 
@@ -383,8 +384,8 @@ void controlVolume::inicializarH16k(){
  */
 void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, float *out, fftw_complex *hk, float *temporal){
 
-    int dobleBloque = 2 * blockSize;
-
+    //int dobleBloque = 2 * blockSize;
+    int dobleBloque = N;
    //Inicializan los arreglos que almacenaran a x(n), X(k), y(n), Y(k).
     fftw_complex *x = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * dobleBloque);
     fftw_complex *X = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * dobleBloque);
@@ -393,36 +394,36 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
 
     //Hay que agregar los 1024 datos entrantes pero en la parte final del bloque
     //Se agregan los 1024 datos entrantes y se inicializa la parte imaginaria en cero al se valores reales.
-    /*
+
     for(int i = 0; i < blockSize; i++){
 
         x[i][REAL] = in[i];
         x[i][IMAG] = 0.0;
 
     }
-*/
-    //Propuesta
 
+    //Propuesta
+/*
     for(int i = blockSize; i < dobleBloque; i++){
 
         x[i][REAL] = in[i];
         x[i][IMAG] = 0.0;
 
     }
-
+*/
 
     //Acá habría que agregar la entrada anterior en vez de 0s.
     //Se agregan M-1 ceros para poder aplicar el metodo de solapamiento y suma. M-1 = 1024.
-    /*
+
     for(int i = blockSize; i< dobleBloque; i++){
 
         x[i][REAL] = 0.0;
         x[i][IMAG] = 0.0;
 
     }
-*/
-    //Propuesta
 
+    //Propuesta
+/*
     if(inicio){
         for(int i = 0; i < blockSize; i++){
 
@@ -439,7 +440,7 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
 
         }
     }
-
+*/
     //Se aplica la DFT a x(n) para obtener X(k).
     fftw_plan dft = fftw_plan_dft_1d(dobleBloque,x,X,FFTW_FORWARD,FFTW_ESTIMATE);
     fftw_execute(dft);
@@ -464,7 +465,7 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
     double Div = static_cast<double>(dobleBloque);
 
     //Luego de aplicar la DFT y la IDFT se debe tomar solo la última parte de la salida de esta
-    /*
+
     if(inicio){
         //Si es el inicio de la cancion los valores de la salida se guardan directamente
         for(int i=0; i<blockSize;i++){
@@ -486,31 +487,33 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
         }
 
     }
-*/
-    //Propuesta
-    for(int i=0; i<blockSize;i++){
 
-       out[i] = static_cast<float>(0.02 * (volumeGain)* (y[i+blockSize][REAL]/Div));
+    //Propuesta
+/*
+    for(int i=0; i<blockSize;i++){
+        double salida =  y[i+blockSize][REAL] / Div;
+        salida = salida * volumeGain * 0.02;
+        out[i] = static_cast<float>(salida);
 
     }
-
+*/
     //Este temporal debe ser la entrada anterior, por lo que sería mejor guardarla entera.
     //Se almacenan los M-1 valores sobrantes de la salida.
-    /*
+
     for(int i=0; i<blockSize;i++){
 
         temporal[i] = static_cast<float>(y[blockSize+i][REAL]/Div);
 
     }
-*/
-    //Propuesta
 
+    //Propuesta
+/*
     for(int i=blockSize; i<dobleBloque;i++){
 
         temporal[i-blockSize] = static_cast<float>(x[i][REAL]/Div);
 
     }
-
+*/
 
     //Se libera la memoria.
     fftw_destroy_plan(dft);

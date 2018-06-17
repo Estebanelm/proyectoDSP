@@ -491,6 +491,7 @@ void MainWindow::on_actionZero_triggered()
  */
 void MainWindow::paintEvent(QPaintEvent *e)//funcion encargada de graficar el nivel de ganancia
 {
+    int bottom = 750;
     // Se definen los puntos donde estaran el centro de cada banda.
     QPoint centro;
     QPoint centro2;
@@ -537,70 +538,70 @@ void MainWindow::paintEvent(QPaintEvent *e)//funcion encargada de graficar el ni
 
     // Se definen las posiciones X e Y de cada linea.
     pI1.setX(120);
-    pI1.setY(175+(-2*ui->f32Slider->value()+50));
+    pI1.setY(235+(-2*ui->f32Slider->value()+50));
 
     pf1.setX(145);
-    pf1.setY(175+(-2*ui->f32Slider->value()+50));
+    pf1.setY(235+(-2*ui->f32Slider->value()+50));
 
     pI2.setX(185);
-    pI2.setY(175+(-2*ui->f64Slider->value()+50));
+    pI2.setY(235+(-2*ui->f64Slider->value()+50));
 
     pf2.setX(210);
-    pf2.setY(175+(-2*ui->f64Slider->value()+50));
+    pf2.setY(235+(-2*ui->f64Slider->value()+50));
 
     pI3.setX(250);
-    pI3.setY(175+(-2*ui->f125Slider->value()+50));
+    pI3.setY(235+(-2*ui->f125Slider->value()+50));
 
     pf3.setX(275);
-    pf3.setY(175+(-2*ui->f125Slider->value()+50));
+    pf3.setY(235+(-2*ui->f125Slider->value()+50));
 
     pI4.setX(315);
-    pI4.setY(175+(-2*ui->f250Slider->value()+50));
+    pI4.setY(235+(-2*ui->f250Slider->value()+50));
 
     pf4.setX(340);
-    pf4.setY(175+(-2*ui->f250Slider->value()+50));
+    pf4.setY(235+(-2*ui->f250Slider->value()+50));
 
     pI5.setX(380);
-    pI5.setY(175+(-2*ui->f500Slider->value()+50));
+    pI5.setY(235+(-2*ui->f500Slider->value()+50));
 
     pf5.setX(405);
-    pf5.setY(175+(-2*ui->f500Slider->value()+50));
+    pf5.setY(235+(-2*ui->f500Slider->value()+50));
 
     pI6.setX(445);
-    pI6.setY(175+(-2*ui->f1kSlider->value()+50));
+    pI6.setY(235+(-2*ui->f1kSlider->value()+50));
 
     pf6.setX(470);
-    pf6.setY(175+(-2*ui->f1kSlider->value()+50));
+    pf6.setY(235+(-2*ui->f1kSlider->value()+50));
 
     pI7.setX(510);
-    pI7.setY(175+(-2*ui->f2kSlider->value()+50));
+    pI7.setY(235+(-2*ui->f2kSlider->value()+50));
 
     pf7.setX(535);
-    pf7.setY(175+(-2*ui->f2kSlider->value()+50));
+    pf7.setY(235+(-2*ui->f2kSlider->value()+50));
 
     pI8.setX(575);
-    pI8.setY(175+(-2*ui->f4kSlider->value()+50));
+    pI8.setY(235+(-2*ui->f4kSlider->value()+50));
 
     pf8.setX(600);
-    pf8.setY(175+(-2*ui->f4kSlider->value()+50));
+    pf8.setY(235+(-2*ui->f4kSlider->value()+50));
 
     pI9.setX(640);
-    pI9.setY(175+(-2*ui->f8kSlider->value()+50));
+    pI9.setY(235+(-2*ui->f8kSlider->value()+50));
 
     pf9.setX(665);
-    pf9.setY(175+(-2*ui->f8kSlider->value()+50));
+    pf9.setY(235+(-2*ui->f8kSlider->value()+50));
 
     pI10.setX(705);
-    pI10.setY(175+(-2*ui->f16kSlider->value()+50));
+    pI10.setY(235+(-2*ui->f16kSlider->value()+50));
 
     pf10.setX(730);
-    pf10.setY(175+(-2*ui->f16kSlider->value()+50));
+    pf10.setY(235+(-2*ui->f16kSlider->value()+50));
 
     centro.setX(100);
-    centro.setY(175);
+    centro.setY(235);
 
     centro2.setX(102);
-    centro2.setY(175);
+    centro2.setY(235);
 
     //Se dibuja la linea punteada.
     for(int i=0;i<130;i++){
@@ -690,5 +691,77 @@ void MainWindow::paintEvent(QPaintEvent *e)//funcion encargada de graficar el ni
     myPath.moveTo(pf9);
     myPath.lineTo(pI10);
     painter.drawPath(myPath);
+
+    int bar1size = 1 + (2*ui->f32Slider->value()+50);
+    int bar2size = 1 + (2*ui->f64Slider->value()+50);
+    int bar3size = 1 + (2*ui->f125Slider->value()+50);
+    int bar4size = 1 + (2*ui->f250Slider->value()+50);
+    int bar5size = 1 + (2*ui->f500Slider->value()+50);
+    int bar6size = 1 + (2*ui->f1kSlider->value()+50);
+    int bar7size = 1 + (2*ui->f2kSlider->value()+50);
+    int bar8size = 1 + (2*ui->f4kSlider->value()+50);
+    int bar9size = 1 + (2*ui->f8kSlider->value()+50);
+    int bar10size = 1 + (2*ui->f16kSlider->value()+50);
+    painter.setBrush(Qt::green);
+    QRect rec1;
+    rec1.setX(115);
+    rec1.setY(bottom-bar1size);
+    rec1.setHeight(bar1size);
+    rec1.setWidth(10);
+    QRect rec2;
+    rec2.setX(180);
+    rec2.setY(bottom-bar2size);
+    rec2.setHeight(bar2size);
+    rec2.setWidth(10);
+    QRect rec3;
+    rec3.setX(245);
+    rec3.setY(bottom-bar3size);
+    rec3.setHeight(bar3size);
+    rec3.setWidth(10);
+    QRect rec4;
+    rec4.setX(310);
+    rec4.setY(bottom-bar4size);
+    rec4.setHeight(bar4size);
+    rec4.setWidth(10);
+    QRect rec5;
+    rec5.setX(375);
+    rec5.setY(bottom-bar5size);
+    rec5.setHeight(bar5size);
+    rec5.setWidth(10);
+    QRect rec6;
+    rec6.setX(440);
+    rec6.setY(bottom-bar6size);
+    rec6.setHeight(bar6size);
+    rec6.setWidth(10);
+    QRect rec7;
+    rec7.setX(505);
+    rec7.setY(bottom-bar7size);
+    rec7.setHeight(bar7size);
+    rec7.setWidth(10);
+    QRect rec8;
+    rec8.setX(570);
+    rec8.setY(bottom-bar8size);
+    rec8.setHeight(bar8size);
+    rec8.setWidth(10);
+    QRect rec9;
+    rec9.setX(635);
+    rec9.setY(bottom-bar9size);
+    rec9.setHeight(bar9size);
+    rec9.setWidth(10);
+    QRect rec10;
+    rec10.setX(700);
+    rec10.setY(bottom-bar10size);
+    rec10.setHeight(bar10size);
+    rec10.setWidth(10);
+    painter.drawRect(rec1);
+    painter.drawRect(rec2);
+    painter.drawRect(rec3);
+    painter.drawRect(rec4);
+    painter.drawRect(rec5);
+    painter.drawRect(rec6);
+    painter.drawRect(rec7);
+    painter.drawRect(rec8);
+    painter.drawRect(rec9);
+    painter.drawRect(rec10);
 
 }

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.8.0
+** Created by: Qt User Interface Compiler version 5.11.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -12,9 +12,7 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
@@ -46,10 +44,7 @@ public:
     QAction *actionFlat;
     QAction *actionZero;
     QWidget *centralWidget;
-    QVBoxLayout *verticalLayout_4;
-    QHBoxLayout *horizontalLayout_3;
-    QLineEdit *fileEdit;
-    QToolButton *fileButton;
+    QWidget *verticalLayoutWidget;
     QHBoxLayout *horizontalLayout_4;
     QVBoxLayout *verticalLayout_3;
     QVBoxLayout *verticalLayout;
@@ -61,6 +56,7 @@ public:
     QLabel *label_13;
     QSpacerItem *verticalSpacer_4;
     QSpacerItem *horizontalSpacer;
+    QWidget *widget;
     QHBoxLayout *horizontalLayout_2;
     QSlider *volumeSlider;
     QSlider *f32Slider;
@@ -73,6 +69,7 @@ public:
     QSlider *f4kSlider;
     QSlider *f8kSlider;
     QSlider *f16kSlider;
+    QWidget *widget1;
     QHBoxLayout *horizontalLayout;
     QLabel *label_2;
     QLabel *label;
@@ -85,6 +82,8 @@ public:
     QLabel *label_8;
     QLabel *label_9;
     QLabel *label_10;
+    QToolButton *fileButton;
+    QLineEdit *fileEdit;
     QMenuBar *menuBar;
     QMenu *menuPreset;
     QMenu *menuFile;
@@ -95,7 +94,8 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(796, 496);
+        MainWindow->setEnabled(true);
+        MainWindow->resize(813, 809);
         QPalette palette;
         QBrush brush(QColor(0, 0, 0, 255));
         brush.setStyle(Qt::SolidPattern);
@@ -184,30 +184,14 @@ public:
         actionZero->setIcon(icon11);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        verticalLayout_4 = new QVBoxLayout(centralWidget);
-        verticalLayout_4->setSpacing(6);
-        verticalLayout_4->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
-        horizontalLayout_3 = new QHBoxLayout();
-        horizontalLayout_3->setSpacing(6);
-        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
-        fileEdit = new QLineEdit(centralWidget);
-        fileEdit->setObjectName(QStringLiteral("fileEdit"));
-        fileEdit->setEnabled(true);
-
-        horizontalLayout_3->addWidget(fileEdit);
-
-        fileButton = new QToolButton(centralWidget);
-        fileButton->setObjectName(QStringLiteral("fileButton"));
-
-        horizontalLayout_3->addWidget(fileButton);
-
-
-        verticalLayout_4->addLayout(horizontalLayout_3);
-
-        horizontalLayout_4 = new QHBoxLayout();
+        verticalLayoutWidget = new QWidget(centralWidget);
+        verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
+        verticalLayoutWidget->setGeometry(QRect(10, 50, 791, 232));
+        horizontalLayout_4 = new QHBoxLayout(verticalLayoutWidget);
         horizontalLayout_4->setSpacing(6);
+        horizontalLayout_4->setContentsMargins(11, 11, 11, 11);
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
+        horizontalLayout_4->setContentsMargins(0, 0, 0, 0);
         verticalLayout_3 = new QVBoxLayout();
         verticalLayout_3->setSpacing(6);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
@@ -218,7 +202,7 @@ public:
 
         verticalLayout->addItem(verticalSpacer);
 
-        label_12 = new QLabel(centralWidget);
+        label_12 = new QLabel(verticalLayoutWidget);
         label_12->setObjectName(QStringLiteral("label_12"));
 
         verticalLayout->addWidget(label_12);
@@ -237,7 +221,7 @@ public:
 
         verticalLayout_2->addItem(verticalSpacer_3);
 
-        label_13 = new QLabel(centralWidget);
+        label_13 = new QLabel(verticalLayoutWidget);
         label_13->setObjectName(QStringLiteral("label_13"));
 
         verticalLayout_2->addWidget(label_13);
@@ -252,17 +236,19 @@ public:
 
         horizontalLayout_4->addLayout(verticalLayout_3);
 
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        horizontalSpacer = new QSpacerItem(718, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout_4->addItem(horizontalSpacer);
 
-
-        verticalLayout_4->addLayout(horizontalLayout_4);
-
-        horizontalLayout_2 = new QHBoxLayout();
+        widget = new QWidget(centralWidget);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(10, 290, 791, 151));
+        horizontalLayout_2 = new QHBoxLayout(widget);
         horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        volumeSlider = new QSlider(centralWidget);
+        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+        volumeSlider = new QSlider(widget);
         volumeSlider->setObjectName(QStringLiteral("volumeSlider"));
         volumeSlider->setMaximum(50);
         volumeSlider->setValue(25);
@@ -270,7 +256,7 @@ public:
 
         horizontalLayout_2->addWidget(volumeSlider);
 
-        f32Slider = new QSlider(centralWidget);
+        f32Slider = new QSlider(widget);
         f32Slider->setObjectName(QStringLiteral("f32Slider"));
         QPalette palette1;
         palette1.setBrush(QPalette::Active, QPalette::Text, brush);
@@ -292,7 +278,7 @@ public:
 
         horizontalLayout_2->addWidget(f32Slider);
 
-        f64Slider = new QSlider(centralWidget);
+        f64Slider = new QSlider(widget);
         f64Slider->setObjectName(QStringLiteral("f64Slider"));
         f64Slider->setMaximum(50);
         f64Slider->setValue(25);
@@ -302,7 +288,7 @@ public:
 
         horizontalLayout_2->addWidget(f64Slider);
 
-        f125Slider = new QSlider(centralWidget);
+        f125Slider = new QSlider(widget);
         f125Slider->setObjectName(QStringLiteral("f125Slider"));
         f125Slider->setMaximum(50);
         f125Slider->setValue(25);
@@ -312,7 +298,7 @@ public:
 
         horizontalLayout_2->addWidget(f125Slider);
 
-        f250Slider = new QSlider(centralWidget);
+        f250Slider = new QSlider(widget);
         f250Slider->setObjectName(QStringLiteral("f250Slider"));
         f250Slider->setMaximum(50);
         f250Slider->setSliderPosition(25);
@@ -322,7 +308,7 @@ public:
 
         horizontalLayout_2->addWidget(f250Slider);
 
-        f500Slider = new QSlider(centralWidget);
+        f500Slider = new QSlider(widget);
         f500Slider->setObjectName(QStringLiteral("f500Slider"));
         f500Slider->setMaximum(50);
         f500Slider->setValue(25);
@@ -332,7 +318,7 @@ public:
 
         horizontalLayout_2->addWidget(f500Slider);
 
-        f1kSlider = new QSlider(centralWidget);
+        f1kSlider = new QSlider(widget);
         f1kSlider->setObjectName(QStringLiteral("f1kSlider"));
         f1kSlider->setMaximum(50);
         f1kSlider->setValue(25);
@@ -342,7 +328,7 @@ public:
 
         horizontalLayout_2->addWidget(f1kSlider);
 
-        f2kSlider = new QSlider(centralWidget);
+        f2kSlider = new QSlider(widget);
         f2kSlider->setObjectName(QStringLiteral("f2kSlider"));
         f2kSlider->setMaximum(50);
         f2kSlider->setValue(25);
@@ -353,7 +339,7 @@ public:
 
         horizontalLayout_2->addWidget(f2kSlider);
 
-        f4kSlider = new QSlider(centralWidget);
+        f4kSlider = new QSlider(widget);
         f4kSlider->setObjectName(QStringLiteral("f4kSlider"));
         f4kSlider->setMaximum(50);
         f4kSlider->setValue(25);
@@ -363,7 +349,7 @@ public:
 
         horizontalLayout_2->addWidget(f4kSlider);
 
-        f8kSlider = new QSlider(centralWidget);
+        f8kSlider = new QSlider(widget);
         f8kSlider->setObjectName(QStringLiteral("f8kSlider"));
         f8kSlider->setMaximum(50);
         f8kSlider->setValue(25);
@@ -373,7 +359,7 @@ public:
 
         horizontalLayout_2->addWidget(f8kSlider);
 
-        f16kSlider = new QSlider(centralWidget);
+        f16kSlider = new QSlider(widget);
         f16kSlider->setObjectName(QStringLiteral("f16kSlider"));
         f16kSlider->setMaximum(50);
         f16kSlider->setValue(25);
@@ -383,13 +369,15 @@ public:
 
         horizontalLayout_2->addWidget(f16kSlider);
 
-
-        verticalLayout_4->addLayout(horizontalLayout_2);
-
-        horizontalLayout = new QHBoxLayout();
+        widget1 = new QWidget(centralWidget);
+        widget1->setObjectName(QStringLiteral("widget1"));
+        widget1->setGeometry(QRect(10, 450, 791, 19));
+        horizontalLayout = new QHBoxLayout(widget1);
         horizontalLayout->setSpacing(6);
+        horizontalLayout->setContentsMargins(11, 11, 11, 11);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        label_2 = new QLabel(centralWidget);
+        horizontalLayout->setContentsMargins(0, 0, 0, 0);
+        label_2 = new QLabel(widget1);
         label_2->setObjectName(QStringLiteral("label_2"));
         QPalette palette2;
         QBrush brush5(QColor(170, 255, 0, 255));
@@ -401,73 +389,78 @@ public:
 
         horizontalLayout->addWidget(label_2);
 
-        label = new QLabel(centralWidget);
+        label = new QLabel(widget1);
         label->setObjectName(QStringLiteral("label"));
         label->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label);
 
-        label_3 = new QLabel(centralWidget);
+        label_3 = new QLabel(widget1);
         label_3->setObjectName(QStringLiteral("label_3"));
         label_3->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_3);
 
-        label_11 = new QLabel(centralWidget);
+        label_11 = new QLabel(widget1);
         label_11->setObjectName(QStringLiteral("label_11"));
         label_11->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_11);
 
-        label_4 = new QLabel(centralWidget);
+        label_4 = new QLabel(widget1);
         label_4->setObjectName(QStringLiteral("label_4"));
         label_4->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_4);
 
-        label_5 = new QLabel(centralWidget);
+        label_5 = new QLabel(widget1);
         label_5->setObjectName(QStringLiteral("label_5"));
         label_5->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_5);
 
-        label_6 = new QLabel(centralWidget);
+        label_6 = new QLabel(widget1);
         label_6->setObjectName(QStringLiteral("label_6"));
         label_6->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_6);
 
-        label_7 = new QLabel(centralWidget);
+        label_7 = new QLabel(widget1);
         label_7->setObjectName(QStringLiteral("label_7"));
         label_7->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_7);
 
-        label_8 = new QLabel(centralWidget);
+        label_8 = new QLabel(widget1);
         label_8->setObjectName(QStringLiteral("label_8"));
         label_8->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_8);
 
-        label_9 = new QLabel(centralWidget);
+        label_9 = new QLabel(widget1);
         label_9->setObjectName(QStringLiteral("label_9"));
         label_9->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_9);
 
-        label_10 = new QLabel(centralWidget);
+        label_10 = new QLabel(widget1);
         label_10->setObjectName(QStringLiteral("label_10"));
         label_10->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_10);
 
-
-        verticalLayout_4->addLayout(horizontalLayout);
-
+        fileButton = new QToolButton(centralWidget);
+        fileButton->setObjectName(QStringLiteral("fileButton"));
+        fileButton->setEnabled(true);
+        fileButton->setGeometry(QRect(774, 11, 26, 24));
+        fileEdit = new QLineEdit(centralWidget);
+        fileEdit->setObjectName(QStringLiteral("fileEdit"));
+        fileEdit->setEnabled(true);
+        fileEdit->setGeometry(QRect(11, 11, 751, 25));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 796, 22));
+        menuBar->setGeometry(QRect(0, 0, 813, 22));
         menuPreset = new QMenu(menuBar);
         menuPreset->setObjectName(QStringLiteral("menuPreset"));
         menuFile = new QMenu(menuBar);
@@ -475,6 +468,7 @@ public:
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
+        mainToolBar->setEnabled(true);
         mainToolBar->setAutoFillBackground(true);
         mainToolBar->setIconSize(QSize(36, 36));
         MainWindow->addToolBar(Qt::TopToolBarArea, mainToolBar);
@@ -516,35 +510,35 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
-        actionClassical->setText(QApplication::translate("MainWindow", "Classical", Q_NULLPTR));
-        actionClub->setText(QApplication::translate("MainWindow", "Club", Q_NULLPTR));
-        actionDance->setText(QApplication::translate("MainWindow", "Dance", Q_NULLPTR));
-        actionFull_Bass_Treble->setText(QApplication::translate("MainWindow", "Full Bass & Treble", Q_NULLPTR));
-        actionFull_Treble->setText(QApplication::translate("MainWindow", "Full Treble", Q_NULLPTR));
-        actionPop->setText(QApplication::translate("MainWindow", "Pop", Q_NULLPTR));
-        actionReggae->setText(QApplication::translate("MainWindow", "Reggae", Q_NULLPTR));
-        actionRock->setText(QApplication::translate("MainWindow", "Rock", Q_NULLPTR));
-        actionTechno->setText(QApplication::translate("MainWindow", "Techno", Q_NULLPTR));
-        actionOpen_wav->setText(QApplication::translate("MainWindow", "Open .wav", Q_NULLPTR));
-        actionFlat->setText(QApplication::translate("MainWindow", "Flat", Q_NULLPTR));
-        actionZero->setText(QApplication::translate("MainWindow", "Zero", Q_NULLPTR));
-        fileButton->setText(QApplication::translate("MainWindow", "...", Q_NULLPTR));
-        label_12->setText(QApplication::translate("MainWindow", "12dB", Q_NULLPTR));
-        label_13->setText(QApplication::translate("MainWindow", "-12dB", Q_NULLPTR));
-        label_2->setText(QApplication::translate("MainWindow", "Volumen", Q_NULLPTR));
-        label->setText(QApplication::translate("MainWindow", "32", Q_NULLPTR));
-        label_3->setText(QApplication::translate("MainWindow", "64", Q_NULLPTR));
-        label_11->setText(QApplication::translate("MainWindow", "125", Q_NULLPTR));
-        label_4->setText(QApplication::translate("MainWindow", "250", Q_NULLPTR));
-        label_5->setText(QApplication::translate("MainWindow", "500", Q_NULLPTR));
-        label_6->setText(QApplication::translate("MainWindow", "1k", Q_NULLPTR));
-        label_7->setText(QApplication::translate("MainWindow", "2k", Q_NULLPTR));
-        label_8->setText(QApplication::translate("MainWindow", "4k", Q_NULLPTR));
-        label_9->setText(QApplication::translate("MainWindow", "8k", Q_NULLPTR));
-        label_10->setText(QApplication::translate("MainWindow", "16k", Q_NULLPTR));
-        menuPreset->setTitle(QApplication::translate("MainWindow", "Preset", Q_NULLPTR));
-        menuFile->setTitle(QApplication::translate("MainWindow", "File", Q_NULLPTR));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", nullptr));
+        actionClassical->setText(QApplication::translate("MainWindow", "Classical", nullptr));
+        actionClub->setText(QApplication::translate("MainWindow", "Club", nullptr));
+        actionDance->setText(QApplication::translate("MainWindow", "Dance", nullptr));
+        actionFull_Bass_Treble->setText(QApplication::translate("MainWindow", "Full Bass & Treble", nullptr));
+        actionFull_Treble->setText(QApplication::translate("MainWindow", "Full Treble", nullptr));
+        actionPop->setText(QApplication::translate("MainWindow", "Pop", nullptr));
+        actionReggae->setText(QApplication::translate("MainWindow", "Reggae", nullptr));
+        actionRock->setText(QApplication::translate("MainWindow", "Rock", nullptr));
+        actionTechno->setText(QApplication::translate("MainWindow", "Techno", nullptr));
+        actionOpen_wav->setText(QApplication::translate("MainWindow", "Open .wav", nullptr));
+        actionFlat->setText(QApplication::translate("MainWindow", "Flat", nullptr));
+        actionZero->setText(QApplication::translate("MainWindow", "Zero", nullptr));
+        label_12->setText(QApplication::translate("MainWindow", "12dB", nullptr));
+        label_13->setText(QApplication::translate("MainWindow", "-12dB", nullptr));
+        label_2->setText(QApplication::translate("MainWindow", "Volumen", nullptr));
+        label->setText(QApplication::translate("MainWindow", "32", nullptr));
+        label_3->setText(QApplication::translate("MainWindow", "64", nullptr));
+        label_11->setText(QApplication::translate("MainWindow", "125", nullptr));
+        label_4->setText(QApplication::translate("MainWindow", "250", nullptr));
+        label_5->setText(QApplication::translate("MainWindow", "500", nullptr));
+        label_6->setText(QApplication::translate("MainWindow", "1k", nullptr));
+        label_7->setText(QApplication::translate("MainWindow", "2k", nullptr));
+        label_8->setText(QApplication::translate("MainWindow", "4k", nullptr));
+        label_9->setText(QApplication::translate("MainWindow", "8k", nullptr));
+        label_10->setText(QApplication::translate("MainWindow", "16k", nullptr));
+        fileButton->setText(QApplication::translate("MainWindow", "...", nullptr));
+        menuPreset->setTitle(QApplication::translate("MainWindow", "Preset", nullptr));
+        menuFile->setTitle(QApplication::translate("MainWindow", "File", nullptr));
     } // retranslateUi
 
 };
