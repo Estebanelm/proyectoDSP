@@ -256,7 +256,8 @@ DIST          = /opt/Qt/5.11.0/gcc_64/mkspecs/features/spec_pre.prf \
 		controlvolume.h \
 		dspsystem.h \
 		jack.h \
-		processor.h main.cpp \
+		processor.h \
+		ventanasingleton.h main.cpp \
 		mainwindow.cpp \
 		controlvolume.cpp \
 		dspsystem.cpp \
@@ -677,7 +678,7 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/Qt/5.11.0/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h controlvolume.h dspsystem.h jack.h processor.h $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h controlvolume.h dspsystem.h jack.h processor.h ventanasingleton.h $(DISTDIR)/
 	$(COPY_FILE) --parents main.cpp mainwindow.cpp controlvolume.cpp dspsystem.cpp jack.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
@@ -1410,6 +1411,7 @@ main.o: main.cpp mainwindow.h \
 		dspsystem.h \
 		processor.h \
 		controlvolume.h \
+		ventanasingleton.h \
 		/opt/Qt/5.11.0/gcc_64/include/QtWidgets/QApplication \
 		/opt/Qt/5.11.0/gcc_64/include/QtWidgets/qapplication.h \
 		/opt/Qt/5.11.0/gcc_64/include/QtWidgets/qdesktopwidget.h
@@ -1783,7 +1785,73 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/opt/Qt/5.11.0/gcc_64/include/QtGui/QPalette
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
-controlvolume.o: controlvolume.cpp controlvolume.h
+controlvolume.o: controlvolume.cpp controlvolume.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/QFile \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qfile.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qiodevice.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qglobal.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qconfig.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qlogging.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qflags.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qatomic.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qmutex.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qnumeric.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qnamespace.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qstring.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qchar.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qbytearray.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qrefcount.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qarraydata.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qstringview.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qlist.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qiterator.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qstringlist.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qmetatype.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/QTextStream \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qtextstream.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qlocale.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qvariant.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qmap.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qdebug.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qset.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o controlvolume.o controlvolume.cpp
 
 dspsystem.o: dspsystem.cpp dspsystem.h \

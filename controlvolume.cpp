@@ -28,6 +28,9 @@
 #include "controlvolume.h"
 #include <cmath>
 #include <iostream>
+#include <QFile>
+#include <QTextStream>
+#include "ventanasingleton.h"
 using namespace std;
 
 #define REAL 0
@@ -52,6 +55,9 @@ controlVolume::controlVolume(){
     f8k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
     f16k = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)* N);
 
+    hkeverb = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)* N);
+    wVentana = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)* N);
+
     //valor booleano que indica el inicio de una cancion.
     inicio = true;
 
@@ -67,6 +73,9 @@ controlVolume::controlVolume(){
     datos8k = new float[N-1024];
     datos16k = new float[N-1024];
 
+    datosReverb = new float[N-1024];
+
+
     //Inicializacion de los valores en los punteros de tipo double[2048][2]
     inicializarH32();
     inicializarH64();
@@ -79,6 +88,8 @@ controlVolume::controlVolume(){
     inicializarH8k();
     inicializarH16k();
 
+    inicializarHReverb(hkeverb);
+    inicializarVentana(wVentana);
 }
 /*
  * Destructor
@@ -86,6 +97,56 @@ controlVolume::controlVolume(){
 controlVolume::~controlVolume(){
 
 }
+
+void controlVolume::inicializarHReverb(fftw_complex *salidaHk)
+{
+    fftw_complex *h = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+    QFile file("reverbhn");
+    if(!file.open(QIODevice::ReadOnly)) {
+        std::cerr << "Error reading file" << std::endl;
+    }
+    QTextStream in(&file);
+    QStringList fields;
+    while(!in.atEnd()) {
+        QString line = in.readLine();
+        fields = line.split("\t");
+    }
+    for (int i = 0; i<1024; i++)
+    {
+        QString str = fields.at(i);
+        h[i][REAL] = str.toFloat();
+        h[i][IMAG] = 0.0;
+    }
+    for (int i = 1024; i<N; i++)
+    {
+        h[i][REAL] = 0.0;
+        h[i][IMAG] = 0.0;
+    }
+    file.close();
+    //Se aplica la DFT.
+    fftw_plan plan = fftw_plan_dft_1d(N,h,salidaHk,FFTW_FORWARD,FFTW_ESTIMATE);
+    fftw_execute(plan);
+
+    //Se libera la memoria.
+    fftw_destroy_plan(plan);
+    fftw_free(h);
+    fftw_cleanup();
+}
+
+void controlVolume::inicializarVentana(fftw_complex *salidaW)
+{
+    for (int i = 0; i<1024; i++)
+    {
+        salidaW[i][REAL] = (1.0/2.0)*(cos((2*PI*i)/(1024)));
+        salidaW[i][IMAG] = 0.0;
+    }
+    for (int i = 1024; i<N; i++)
+    {
+        salidaW[i][REAL] = 0.0;
+        salidaW[i][IMAG] = 0.0;
+    }
+}
+
 /**
  * @brief inicializarHK Funcion encargada de generar H(k) utilizando la DFT para un filtro especifico.
  * @param puntero puntero a un arreglo donde se almacenaran los valores de H(k).
@@ -392,9 +453,7 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
     fftw_complex *Y = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * dobleBloque);
     fftw_complex *y = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * dobleBloque);
 
-    //Hay que agregar los 1024 datos entrantes pero en la parte final del bloque
     //Se agregan los 1024 datos entrantes y se inicializa la parte imaginaria en cero al se valores reales.
-
     for(int i = 0; i < blockSize; i++){
 
         x[i][REAL] = in[i];
@@ -402,17 +461,7 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
 
     }
 
-    //Propuesta
-/*
-    for(int i = blockSize; i < dobleBloque; i++){
 
-        x[i][REAL] = in[i];
-        x[i][IMAG] = 0.0;
-
-    }
-*/
-
-    //Acá habría que agregar la entrada anterior en vez de 0s.
     //Se agregan M-1 ceros para poder aplicar el metodo de solapamiento y suma. M-1 = 1024.
 
     for(int i = blockSize; i< dobleBloque; i++){
@@ -422,25 +471,6 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
 
     }
 
-    //Propuesta
-/*
-    if(inicio){
-        for(int i = 0; i < blockSize; i++){
-
-            x[i][REAL] = 0.0;
-            x[i][IMAG] = 0.0;
-
-        }
-    }
-    else {
-        for(int i = 0; i < blockSize; i++){
-
-            x[i][REAL] = temporal[i];
-            x[i][IMAG] = 0.0;
-
-        }
-    }
-*/
     //Se aplica la DFT a x(n) para obtener X(k).
     fftw_plan dft = fftw_plan_dft_1d(dobleBloque,x,X,FFTW_FORWARD,FFTW_ESTIMATE);
     fftw_execute(dft);
@@ -464,8 +494,6 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
 
     double Div = static_cast<double>(dobleBloque);
 
-    //Luego de aplicar la DFT y la IDFT se debe tomar solo la última parte de la salida de esta
-
     if(inicio){
         //Si es el inicio de la cancion los valores de la salida se guardan directamente
         for(int i=0; i<blockSize;i++){
@@ -487,30 +515,81 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
         }
 
     }
-
-    //Propuesta
-/*
-    for(int i=0; i<blockSize;i++){
-        double salida =  y[i+blockSize][REAL] / Div;
-        salida = salida * volumeGain * 0.02;
-        out[i] = static_cast<float>(salida);
-
-    }
-*/
-    //Este temporal debe ser la entrada anterior, por lo que sería mejor guardarla entera.
     //Se almacenan los M-1 valores sobrantes de la salida.
-
     for(int i=0; i<blockSize;i++){
 
         temporal[i] = static_cast<float>(y[blockSize+i][REAL]/Div);
 
     }
 
-    //Propuesta
-/*
-    for(int i=blockSize; i<dobleBloque;i++){
+//Solapamiento y almacenamiento/////////////////////
 
-        temporal[i-blockSize] = static_cast<float>(x[i][REAL]/Div);
+/*
+    //Hay que agregar los 1024 datos entrantes pero en la parte final del bloque
+    //Propuesta
+
+    for(int i = blockSize; i < dobleBloque; i++){
+
+        x[i][REAL] = in[i];
+        x[i][IMAG] = 0.0;
+
+    }
+
+
+    //Acá habría que agregar la entrada anterior en vez de 0s.
+    //Propuesta
+
+    if(inicio){
+        cout << "Se agregan 1s a la entrada" << endl;
+        for(int i = 0; i < blockSize; i++){
+
+            x[i][REAL] = 0.0;
+            x[i][IMAG] = 0.0;
+
+        }
+    }
+    else {
+        for(int i = 0; i < blockSize; i++){
+
+            x[i][REAL] = temporal[i];
+            x[i][IMAG] = 0.0;
+
+        }
+    }
+
+    //Se aplica la DFT a x(n) para obtener X(k).
+    fftw_plan dft = fftw_plan_dft_1d(dobleBloque,x,X,FFTW_FORWARD,FFTW_ESTIMATE);
+    fftw_execute(dft);
+
+    for(int i = 0;i<dobleBloque;i++){
+
+        Y[i][REAL] = (X[i][REAL]*hk[i][REAL]) - (X[i][IMAG]*hk[i][IMAG]);
+        Y[i][IMAG] = (X[i][IMAG]*hk[i][REAL]) + (X[i][REAL]*hk[i][IMAG]);
+
+    }
+
+    //Se aplica la IDFT a Y(k) para obtener y(n).
+    fftw_plan idft = fftw_plan_dft_1d(dobleBloque,Y,y,FFTW_BACKWARD,FFTW_ESTIMATE);
+    fftw_execute(idft);
+
+    double Div = static_cast<double>(dobleBloque);
+
+    //Luego de aplicar la DFT y la IDFT se debe tomar solo la última parte de la salida de esta
+    //Propuesta
+
+    for(int i=0; i<blockSize;i++){
+        double salida = y[i+blockSize][REAL] / Div;
+        salida = salida * volumeGain * 0.02;
+        out[i] = salida;
+
+    }
+
+    //Este temporal debe ser la entrada anterior, por lo que sería mejor guardarla entera.
+    //Propuesta
+
+    for(int i=0; i<blockSize;i++){
+
+        temporal[i] = static_cast<float>(in[i]);
 
     }
 */
@@ -522,6 +601,114 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
     fftw_free(X);
     fftw_free(y);
     fftw_free(Y);
+    fftw_cleanup();
+}
+
+void controlVolume::obtenerEspectroPoder(float* in)
+{
+    int blocksize = 1024;
+    float maximoBin1 = 0.0;
+    float maximoBin2 = 0.0;
+    float maximoBin3 = 0.0;
+    float maximoBin4 = 0.0;
+    float maximoBin5 = 0.0;
+    float maximoBin6 = 0.0;
+    float maximoBin7 = 0.0;
+    float maximoBin8 = 0.0;
+    float maximoBin9 = 0.0;
+    float maximoBin10 = 0.0;
+
+    //Inicializan los arreglos que almacenaran a x(n), X(k), y(n), Y(k).
+     fftw_complex *x = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+     fftw_complex *X = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+     float* magnitudX = (float*) malloc(sizeof(float)*N);
+
+     //se inicializa el vector de entrada con los datos de audio multiplicados por la ventana
+     //Esto se hace según el método de Welch
+     for(int i = 0; i < blocksize; i++){
+
+         x[i][REAL] = in[i]*static_cast<float>(wVentana[i][REAL]);
+         x[i][IMAG] = 0.0;
+
+     }
+
+     for(int i = blocksize; i < N; i++){
+
+         x[i][REAL] = 0.0;
+         x[i][IMAG] = 0.0;
+
+     }
+     //Se aplica la DFT a x(n).
+     fftw_plan dft = fftw_plan_dft_1d(N,x,X,FFTW_FORWARD,FFTW_ESTIMATE);
+     fftw_execute(dft);
+
+     for(int i = 0; i < N; i++){
+
+         float num = (1/(N*0.1875))*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
+         magnitudX[i] = num;
+        if (i>2039)
+        {
+            break;
+        }
+        int binNumber = round(i/204.0);
+        switch (binNumber)
+        {
+            case 0 : if (magnitudX[i]>maximoBin1)
+            {
+                maximoBin1 = magnitudX[i];
+            }
+            case 1 : if (magnitudX[i]>maximoBin2)
+            {
+                maximoBin2 = magnitudX[i];
+            }
+            case 2 : if (magnitudX[i]>maximoBin3)
+            {
+                maximoBin3 = magnitudX[i];
+            }
+            case 3 : if (magnitudX[i]>maximoBin4)
+            {
+                maximoBin4 = magnitudX[i];
+            }
+            case 4 : if (magnitudX[i]>maximoBin5)
+            {
+                maximoBin5 = magnitudX[i];
+            }
+            case 5 : if (magnitudX[i]>maximoBin6)
+            {
+                maximoBin6 = magnitudX[i];
+            }
+            case 6 : if (magnitudX[i]>maximoBin7)
+            {
+                maximoBin7 = magnitudX[i];
+            }
+            case 7 : if (magnitudX[i]>maximoBin8)
+            {
+                maximoBin8 = magnitudX[i];
+            }
+            case 8 : if (magnitudX[i]>maximoBin9)
+            {
+                maximoBin9 = magnitudX[i];
+            }
+            case 9 : if (magnitudX[i]>maximoBin10)
+            {
+                maximoBin10 = magnitudX[i];
+            }
+        }
+     }
+     VentanaSingleton::instance()->setBin1(maximoBin1*30);
+     VentanaSingleton::instance()->setBin2(maximoBin2*30);
+     VentanaSingleton::instance()->setBin3(maximoBin3*30);
+     VentanaSingleton::instance()->setBin4(maximoBin4*30);
+     VentanaSingleton::instance()->setBin5(maximoBin5*30);
+     VentanaSingleton::instance()->setBin6(maximoBin6*30);
+     VentanaSingleton::instance()->setBin7(maximoBin7*30);
+     VentanaSingleton::instance()->setBin8(maximoBin8*30);
+     VentanaSingleton::instance()->setBin9(maximoBin9*30);
+     VentanaSingleton::instance()->setBin10(maximoBin10*30);
+    //Se libera la memoria.
+    fftw_destroy_plan(dft);
+    fftw_free(x);
+    fftw_free(X);
     fftw_cleanup();
 }
 
@@ -556,6 +743,8 @@ void controlVolume::filter(int blockSize, int volumeGain,int g32,int g64,int g12
     float* pf8k = new float[blockSize];
     float* pf16k = new float[blockSize];
 
+    float* salidaReverb = new float[blockSize];
+
     //Se llama la funcion que realiza el filtrado para cada uno de los filtros.
     //filtroGeneral(int blockSize, int volumeGain, float *in, float *out, fftw_complex *hk, float *temporal)
     //blocksize es L o el tamaño que se obtiene de la entrada.
@@ -564,21 +753,26 @@ void controlVolume::filter(int blockSize, int volumeGain,int g32,int g64,int g12
     //out es la y(n) para cada filtro
     //hk es el filtro en el dominio de la frecuencia
     //temporal es un bloque del último proceso de filtrado, usado en solapamiento y suma
-    filtroGeneral(blockSize,g32,in,pf32,f32,datos32);
-    filtroGeneral(blockSize,g64,in,pf64,f64,datos64);
-    filtroGeneral(blockSize,g125,in,pf125,f125,datos125);
-    filtroGeneral(blockSize,g250,in,pf250,f250,datos250);
-    filtroGeneral(blockSize,g500,in,pf500,f500,datos500);
-    filtroGeneral(blockSize,g1k,in,pf1k,f1k,datos1k);
-    filtroGeneral(blockSize,g2k,in,pf2k,f2k,datos2k);
-    filtroGeneral(blockSize,g4k,in,pf4k,f4k,datos4k);
-    filtroGeneral(blockSize,g8k,in,pf8k,f8k,datos8k);
-    filtroGeneral(blockSize,g16k,in,pf16k,f16k,datos16k);
+    //filtroGeneral(blockSize,g32,in,pf32,f32,datos32);
+    //filtroGeneral(blockSize,g64,in,pf64,f64,datos64);
+    //filtroGeneral(blockSize,g125,in,pf125,f125,datos125);
+    //filtroGeneral(blockSize,g250,in,pf250,f250,datos250);
+    //filtroGeneral(blockSize,g500,in,pf500,f500,datos500);
+    //filtroGeneral(blockSize,g1k,in,pf1k,f1k,datos1k);
+    //filtroGeneral(blockSize,g2k,in,pf2k,f2k,datos2k);
+    //filtroGeneral(blockSize,g4k,in,pf4k,f4k,datos4k);
+    //filtroGeneral(blockSize,g8k,in,pf8k,f8k,datos8k);
+    //filtroGeneral(blockSize,g16k,in,pf16k,f16k,datos16k);
+
+    filtroGeneral(blockSize, 25, in, salidaReverb, hkeverb, datosReverb);
+
+    obtenerEspectroPoder(in);
 
     // Se define cada elemento de la salida como la suma de las salidas de los filtros para un n, escalado por una constante.
     for (int n=0; n<blockSize;++n){
 
-        out[n] = 0.02 * (volumeGain)*(pf32[n]+pf64[n]+pf125[n]+pf250[n]+pf500[n]+pf1k[n]+pf2k[n]+pf4k[n]+pf8k[n]+pf16k[n]);
+        //out[n] = 0.02 * (volumeGain)*(pf32[n]+pf64[n]+pf125[n]+pf250[n]+pf500[n]+pf1k[n]+pf2k[n]+pf4k[n]+pf8k[n]+pf16k[n]);
+        out[n] = 0.01 * (volumeGain)*(salidaReverb[n]);
     }
 
     //Al realizar el procedimiento una vez se define que ya no es el inicio de la cancion.
@@ -597,4 +791,5 @@ void controlVolume::filter(int blockSize, int volumeGain,int g32,int g64,int g12
     delete pf4k;
     delete pf8k;
     delete pf16k;
+    delete salidaReverb;
 }

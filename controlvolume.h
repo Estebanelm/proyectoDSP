@@ -56,6 +56,9 @@ public:
     fftw_complex *f8k;
     fftw_complex *f16k;
 
+    fftw_complex *hkeverb;
+    fftw_complex *wVentana;
+
     //Arreglos donde se almacenan las ultimas M-1 muestras del la salida anterior calculada. (Solapamiento y suma).
     float* datos32;
     float* datos64;
@@ -67,6 +70,8 @@ public:
     float* datos4k;
     float* datos8k;
     float* datos16k;
+
+    float* datosReverb;
     bool inicio;
 
     /**
@@ -122,6 +127,8 @@ public:
     */
    void filtroGeneral(int blockSize,int volumeGain, float* in, float* out,fftw_complex *hk,float* temporal);
 
+   void obtenerEspectroPoder(float* in);
+
 private:
 
    /**
@@ -157,6 +164,8 @@ private:
    void inicializarH8k();
    void inicializarH16k();
 
+   void inicializarHReverb(fftw_complex *salidaHk);
+   void inicializarVentana(fftw_complex *salidaW);
 };
 
 

@@ -27,7 +27,8 @@ HEADERS  += mainwindow.h \
     controlvolume.h \
     dspsystem.h \
     jack.h \
-    processor.h
+    processor.h \
+    ventanasingleton.h
 
 FORMS    += mainwindow.ui
 

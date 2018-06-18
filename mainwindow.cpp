@@ -30,6 +30,10 @@
 #include "jack.h"
 #include <string>
 #include <QPalette>
+#include "ventanasingleton.h"
+#include <iostream>
+
+using namespace std;
 
 #undef _DSP_DEBUG
 #define _DSP_DEBUG
@@ -100,7 +104,7 @@ void MainWindow::update() {
 
         dspChanged_=false;
     }
-
+    this->repaint();
 }
 
 void MainWindow::on_volumeSlider_valueChanged(int value){
@@ -239,6 +243,7 @@ void MainWindow::on_f1kSlider_valueChanged(int value)
     dsp_->updateG1k(value);
     this->repaint();
 }
+
 
 /**
  * @brief MainWindow::on_f2kSlider_valueChanged Metodo que indica cuando se cambio el valor de un slider en la interfaz grafica.
@@ -491,6 +496,7 @@ void MainWindow::on_actionZero_triggered()
  */
 void MainWindow::paintEvent(QPaintEvent *e)//funcion encargada de graficar el nivel de ganancia
 {
+
     int bottom = 750;
     // Se definen los puntos donde estaran el centro de cada banda.
     QPoint centro;
@@ -692,16 +698,16 @@ void MainWindow::paintEvent(QPaintEvent *e)//funcion encargada de graficar el ni
     myPath.lineTo(pI10);
     painter.drawPath(myPath);
 
-    int bar1size = 1 + (2*ui->f32Slider->value()+50);
-    int bar2size = 1 + (2*ui->f64Slider->value()+50);
-    int bar3size = 1 + (2*ui->f125Slider->value()+50);
-    int bar4size = 1 + (2*ui->f250Slider->value()+50);
-    int bar5size = 1 + (2*ui->f500Slider->value()+50);
-    int bar6size = 1 + (2*ui->f1kSlider->value()+50);
-    int bar7size = 1 + (2*ui->f2kSlider->value()+50);
-    int bar8size = 1 + (2*ui->f4kSlider->value()+50);
-    int bar9size = 1 + (2*ui->f8kSlider->value()+50);
-    int bar10size = 1 + (2*ui->f16kSlider->value()+50);
+    int bar1size = 1 + VentanaSingleton::instance()->getBin1();
+    int bar2size = 1 + VentanaSingleton::instance()->getBin2();
+    int bar3size = 1 + VentanaSingleton::instance()->getBin3();
+    int bar4size = 1 + VentanaSingleton::instance()->getBin4();
+    int bar5size = 1 + VentanaSingleton::instance()->getBin5();
+    int bar6size = 1 + VentanaSingleton::instance()->getBin6();
+    int bar7size = 1 + VentanaSingleton::instance()->getBin7();
+    int bar8size = 1 + VentanaSingleton::instance()->getBin8();
+    int bar9size = 1 + VentanaSingleton::instance()->getBin9();
+    int bar10size = 1 + VentanaSingleton::instance()->getBin10();
     painter.setBrush(Qt::green);
     QRect rec1;
     rec1.setX(115);

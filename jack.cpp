@@ -323,7 +323,7 @@ void jack::init(processor* proc) {
   sampleRate_  = jack_get_sample_rate(client_);
   bufferSize_ = jack_get_buffer_size(client_);
 
-  sleepTime_ = static_cast<int>(double(bufferSize_)*1000000.0/sampleRate_)/2;
+  sleepTime_ = static_cast<int>(double(bufferSize_)*1000000.0/sampleRate_);
 
   dsp_->init(sampleRate_,bufferSize_);
 
