@@ -31,6 +31,7 @@
 #include <QFile>
 #include <QTextStream>
 #include "ventanasingleton.h"
+#include <sndfile.h>
 using namespace std;
 
 #define REAL 0
@@ -138,11 +139,6 @@ void controlVolume::inicializarVentana(fftw_complex *salidaW)
     for (int i = 0; i<1024; i++)
     {
         salidaW[i][REAL] = (1.0/2.0)*(cos((2*PI*i)/(1024)));
-        salidaW[i][IMAG] = 0.0;
-    }
-    for (int i = 1024; i<N; i++)
-    {
-        salidaW[i][REAL] = 0.0;
         salidaW[i][IMAG] = 0.0;
     }
 }
@@ -619,9 +615,21 @@ void controlVolume::obtenerEspectroPoder(float* in)
     float maximoBin10 = 0.0;
 
     //Inicializan los arreglos que almacenaran a x(n), X(k), y(n), Y(k).
-     fftw_complex *x = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
-     fftw_complex *X = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
-     float* magnitudX = (float*) malloc(sizeof(float)*N);
+     fftw_complex *x = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * blocksize);
+     fftw_complex *X = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * blocksize);
+     float* magnitudX = (float*) malloc(sizeof(float)*blocksize);
+/*
+     for(int i = 0; i < blocksize; i++){
+
+         x[i][REAL] = in[i];
+         x[i][IMAG] = 0.0;
+
+     }
+
+     //Se aplica la DFT a x(n) para obtener X(k).
+     fftw_plan dft = fftw_plan_dft_1d(blocksize,x,X,FFTW_FORWARD,FFTW_ESTIMATE);
+     fftw_execute(dft);
+*/
 
      //se inicializa el vector de entrada con los datos de audio multiplicados por la ventana
      //Esto se hace según el método de Welch
@@ -632,79 +640,84 @@ void controlVolume::obtenerEspectroPoder(float* in)
 
      }
 
-     for(int i = blocksize; i < N; i++){
-
-         x[i][REAL] = 0.0;
-         x[i][IMAG] = 0.0;
-
-     }
      //Se aplica la DFT a x(n).
-     fftw_plan dft = fftw_plan_dft_1d(N,x,X,FFTW_FORWARD,FFTW_ESTIMATE);
+     fftw_plan dft = fftw_plan_dft_1d(blocksize,x,X,FFTW_FORWARD,FFTW_ESTIMATE);
      fftw_execute(dft);
 
-     for(int i = 0; i < N; i++){
+     for(int i = 0; i < blocksize/2; i++){
 
-         float num = (1/(N*0.1875))*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
-         magnitudX[i] = num;
-        if (i>2039)
+         //float num = (1/(blocksize*0.1875))*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
+         //magnitudX[i] = num;
+         magnitudX[i] = (1.0/blocksize)*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
+        if (i>509)
         {
             break;
         }
-        int binNumber = round(i/204.0);
+        int binNumber = i/51.0;
         switch (binNumber)
         {
             case 0 : if (magnitudX[i]>maximoBin1)
             {
                 maximoBin1 = magnitudX[i];
             }
+            break;
             case 1 : if (magnitudX[i]>maximoBin2)
             {
                 maximoBin2 = magnitudX[i];
             }
+            break;
             case 2 : if (magnitudX[i]>maximoBin3)
             {
                 maximoBin3 = magnitudX[i];
             }
+            break;
             case 3 : if (magnitudX[i]>maximoBin4)
             {
                 maximoBin4 = magnitudX[i];
             }
+            break;
             case 4 : if (magnitudX[i]>maximoBin5)
             {
                 maximoBin5 = magnitudX[i];
             }
+            break;
             case 5 : if (magnitudX[i]>maximoBin6)
             {
                 maximoBin6 = magnitudX[i];
             }
+            break;
             case 6 : if (magnitudX[i]>maximoBin7)
             {
                 maximoBin7 = magnitudX[i];
             }
+            break;
             case 7 : if (magnitudX[i]>maximoBin8)
             {
                 maximoBin8 = magnitudX[i];
             }
+            break;
             case 8 : if (magnitudX[i]>maximoBin9)
             {
                 maximoBin9 = magnitudX[i];
             }
+            break;
             case 9 : if (magnitudX[i]>maximoBin10)
             {
                 maximoBin10 = magnitudX[i];
             }
+            break;
         }
      }
-     VentanaSingleton::instance()->setBin1(maximoBin1*30);
-     VentanaSingleton::instance()->setBin2(maximoBin2*30);
-     VentanaSingleton::instance()->setBin3(maximoBin3*30);
-     VentanaSingleton::instance()->setBin4(maximoBin4*30);
-     VentanaSingleton::instance()->setBin5(maximoBin5*30);
-     VentanaSingleton::instance()->setBin6(maximoBin6*30);
-     VentanaSingleton::instance()->setBin7(maximoBin7*30);
-     VentanaSingleton::instance()->setBin8(maximoBin8*30);
-     VentanaSingleton::instance()->setBin9(maximoBin9*30);
-     VentanaSingleton::instance()->setBin10(maximoBin10*30);
+     VentanaSingleton::instance()->setBin1(maximoBin1*50);
+     VentanaSingleton::instance()->setBin2(maximoBin2*50);
+     VentanaSingleton::instance()->setBin3(maximoBin3*50);
+     VentanaSingleton::instance()->setBin4(maximoBin4*50);
+     VentanaSingleton::instance()->setBin5(maximoBin5*50);
+     VentanaSingleton::instance()->setBin6(maximoBin6*50);
+     VentanaSingleton::instance()->setBin7(maximoBin7*50);
+     VentanaSingleton::instance()->setBin8(maximoBin8*50);
+     VentanaSingleton::instance()->setBin9(maximoBin9*50);
+     VentanaSingleton::instance()->setBin10(maximoBin10*50);
     //Se libera la memoria.
     fftw_destroy_plan(dft);
     fftw_free(x);

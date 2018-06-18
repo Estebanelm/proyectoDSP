@@ -708,6 +708,7 @@ void MainWindow::paintEvent(QPaintEvent *e)//funcion encargada de graficar el ni
     int bar8size = 1 + VentanaSingleton::instance()->getBin8();
     int bar9size = 1 + VentanaSingleton::instance()->getBin9();
     int bar10size = 1 + VentanaSingleton::instance()->getBin10();
+    //cout << "el tamaño de las barras es "<<bar1size<< " " <<bar1size<< " " <<bar2size<< " " <<bar3size<< " " <<bar4size<< " " <<bar5size<< " " << endl;
     painter.setBrush(Qt::green);
     QRect rec1;
     rec1.setX(115);
