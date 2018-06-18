@@ -646,78 +646,75 @@ void controlVolume::obtenerEspectroPoder(float* in)
 
      for(int i = 0; i < blocksize/2; i++){
 
-         //float num = (1/(blocksize*0.1875))*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
-         //magnitudX[i] = num;
-         magnitudX[i] = (1.0/blocksize)*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
+         float num = (1/(blocksize*0.1875))*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
+         magnitudX[i] = num;
+         //magnitudX[i] = (1.0/blocksize)*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
         if (i>509)
         {
             break;
         }
-        int binNumber = i/51.0;
-        switch (binNumber)
+        float frecuenciaAnalogica = (44100.0/1024.0)*i;
+        if (frecuenciaAnalogica < 40)
         {
-            case 0 : if (magnitudX[i]>maximoBin1)
-            {
+            if (magnitudX[i]>maximoBin1)
                 maximoBin1 = magnitudX[i];
-            }
-            break;
-            case 1 : if (magnitudX[i]>maximoBin2)
-            {
+        }
+        else if (frecuenciaAnalogica < 70)
+        {
+            if (magnitudX[i]>maximoBin2)
                 maximoBin2 = magnitudX[i];
-            }
-            break;
-            case 2 : if (magnitudX[i]>maximoBin3)
-            {
+        }
+        else if (frecuenciaAnalogica < 140)
+        {
+            if (magnitudX[i]>maximoBin3)
                 maximoBin3 = magnitudX[i];
-            }
-            break;
-            case 3 : if (magnitudX[i]>maximoBin4)
-            {
+        }
+        else if (frecuenciaAnalogica < 270)
+        {
+            if (magnitudX[i]>maximoBin4)
                 maximoBin4 = magnitudX[i];
-            }
-            break;
-            case 4 : if (magnitudX[i]>maximoBin5)
-            {
+        }
+        else if (frecuenciaAnalogica < 600)
+        {
+            if (magnitudX[i]>maximoBin5)
                 maximoBin5 = magnitudX[i];
-            }
-            break;
-            case 5 : if (magnitudX[i]>maximoBin6)
-            {
+        }
+        else if (frecuenciaAnalogica < 1200)
+        {
+            if (magnitudX[i]>maximoBin6)
                 maximoBin6 = magnitudX[i];
-            }
-            break;
-            case 6 : if (magnitudX[i]>maximoBin7)
-            {
+        }
+        else if (frecuenciaAnalogica < 2200)
+        {
+            if (magnitudX[i]>maximoBin7)
                 maximoBin7 = magnitudX[i];
-            }
-            break;
-            case 7 : if (magnitudX[i]>maximoBin8)
-            {
+        }
+        else if (frecuenciaAnalogica < 4200)
+        {
+            if (magnitudX[i]>maximoBin8)
                 maximoBin8 = magnitudX[i];
-            }
-            break;
-            case 8 : if (magnitudX[i]>maximoBin9)
-            {
-                maximoBin9 = magnitudX[i];
-            }
-            break;
-            case 9 : if (magnitudX[i]>maximoBin10)
-            {
+        }
+        else if (frecuenciaAnalogica < 8200)
+        {
+            if (magnitudX[i]>maximoBin9)
+                    maximoBin9 = magnitudX[i];
+        }
+        else
+        {
+            if (magnitudX[i]>maximoBin10)
                 maximoBin10 = magnitudX[i];
-            }
-            break;
         }
      }
-     VentanaSingleton::instance()->setBin1(maximoBin1*50);
-     VentanaSingleton::instance()->setBin2(maximoBin2*50);
-     VentanaSingleton::instance()->setBin3(maximoBin3*50);
-     VentanaSingleton::instance()->setBin4(maximoBin4*50);
-     VentanaSingleton::instance()->setBin5(maximoBin5*50);
-     VentanaSingleton::instance()->setBin6(maximoBin6*50);
-     VentanaSingleton::instance()->setBin7(maximoBin7*50);
-     VentanaSingleton::instance()->setBin8(maximoBin8*50);
-     VentanaSingleton::instance()->setBin9(maximoBin9*50);
-     VentanaSingleton::instance()->setBin10(maximoBin10*50);
+     VentanaSingleton::instance()->setBin1(maximoBin1*200);
+     VentanaSingleton::instance()->setBin2(maximoBin2*200);
+     VentanaSingleton::instance()->setBin3(maximoBin3*200);
+     VentanaSingleton::instance()->setBin4(maximoBin4*200);
+     VentanaSingleton::instance()->setBin5(maximoBin5*200);
+     VentanaSingleton::instance()->setBin6(maximoBin6*200);
+     VentanaSingleton::instance()->setBin7(maximoBin7*200);
+     VentanaSingleton::instance()->setBin8(maximoBin8*200);
+     VentanaSingleton::instance()->setBin9(maximoBin9*200);
+     VentanaSingleton::instance()->setBin10(maximoBin10*200);
     //Se libera la memoria.
     fftw_destroy_plan(dft);
     fftw_free(x);

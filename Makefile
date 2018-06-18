@@ -1782,7 +1782,8 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		jack.h \
 		/opt/Qt/5.11.0/gcc_64/include/QtCore/QThread \
 		/opt/Qt/5.11.0/gcc_64/include/QtCore/QMutex \
-		/opt/Qt/5.11.0/gcc_64/include/QtGui/QPalette
+		/opt/Qt/5.11.0/gcc_64/include/QtGui/QPalette \
+		ventanasingleton.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 controlvolume.o: controlvolume.cpp controlvolume.h \
@@ -1851,7 +1852,8 @@ controlvolume.o: controlvolume.cpp controlvolume.h \
 		/opt/Qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		/opt/Qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
 		/opt/Qt/5.11.0/gcc_64/include/QtCore/qshareddata.h \
-		/opt/Qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h
+		/opt/Qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		ventanasingleton.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o controlvolume.o controlvolume.cpp
 
 dspsystem.o: dspsystem.cpp dspsystem.h \
