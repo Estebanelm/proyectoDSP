@@ -37,6 +37,7 @@ using namespace std;
 #define REAL 0
 #define IMAG 1
 #define PI 3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128481
+#define e = 2.718281828459045235360287471352
 #define N 8192
 
 /*
@@ -658,47 +659,47 @@ void controlVolume::obtenerEspectroPoder(float* in)
             break;
         }
         float frecuenciaAnalogica = (44100.0/(N/2))*i;
-        if (frecuenciaAnalogica < 40)
+        if (frecuenciaAnalogica < 50)
         {
             if (magnitudX[i]>maximoBin1)
                 maximoBin1 = magnitudX[i];
         }
-        else if (frecuenciaAnalogica < 70)
+        else if (frecuenciaAnalogica < 85)
         {
             if (magnitudX[i]>maximoBin2)
                 maximoBin2 = magnitudX[i];
         }
-        else if (frecuenciaAnalogica < 140)
+        else if (frecuenciaAnalogica < 180)
         {
             if (magnitudX[i]>maximoBin3)
                 maximoBin3 = magnitudX[i];
         }
-        else if (frecuenciaAnalogica < 270)
+        else if (frecuenciaAnalogica < 380)
         {
             if (magnitudX[i]>maximoBin4)
                 maximoBin4 = magnitudX[i];
         }
-        else if (frecuenciaAnalogica < 600)
+        else if (frecuenciaAnalogica < 800)
         {
             if (magnitudX[i]>maximoBin5)
                 maximoBin5 = magnitudX[i];
         }
-        else if (frecuenciaAnalogica < 1200)
+        else if (frecuenciaAnalogica < 1700)
         {
             if (magnitudX[i]>maximoBin6)
                 maximoBin6 = magnitudX[i];
         }
-        else if (frecuenciaAnalogica < 2200)
+        else if (frecuenciaAnalogica < 3500)
         {
             if (magnitudX[i]>maximoBin7)
                 maximoBin7 = magnitudX[i];
         }
-        else if (frecuenciaAnalogica < 4200)
+        else if (frecuenciaAnalogica < 7000)
         {
             if (magnitudX[i]>maximoBin8)
                 maximoBin8 = magnitudX[i];
         }
-        else if (frecuenciaAnalogica < 8200)
+        else if (frecuenciaAnalogica < 14000)
         {
             if (magnitudX[i]>maximoBin9)
                     maximoBin9 = magnitudX[i];
@@ -709,16 +710,27 @@ void controlVolume::obtenerEspectroPoder(float* in)
                 maximoBin10 = magnitudX[i];
         }
      }
-     VentanaSingleton::instance()->setBin1(maximoBin1*200);
-     VentanaSingleton::instance()->setBin2(maximoBin2*200);
-     VentanaSingleton::instance()->setBin3(maximoBin3*200);
-     VentanaSingleton::instance()->setBin4(maximoBin4*200);
-     VentanaSingleton::instance()->setBin5(maximoBin5*200);
-     VentanaSingleton::instance()->setBin6(maximoBin6*200);
-     VentanaSingleton::instance()->setBin7(maximoBin7*200);
-     VentanaSingleton::instance()->setBin8(maximoBin8*200);
-     VentanaSingleton::instance()->setBin9(maximoBin9*200);
-     VentanaSingleton::instance()->setBin10(maximoBin10*200);
+
+     maximoBin1 = 170*(1-exp(-0.01*maximoBin1*300));
+     maximoBin2 = 170*(1-exp(-0.01*maximoBin2*300));
+     maximoBin3 = 170*(1-exp(-0.01*maximoBin3*300));
+     maximoBin4 = 170*(1-exp(-0.01*maximoBin4*300));
+     maximoBin5 = 170*(1-exp(-0.01*maximoBin5*300));
+     maximoBin6 = 170*(1-exp(-0.01*maximoBin6*300));
+     maximoBin7 = 170*(1-exp(-0.01*maximoBin7*300));
+     maximoBin8 = 170*(1-exp(-0.01*maximoBin8*300));
+     maximoBin9 = 170*(1-exp(-0.01*maximoBin9*300));
+     maximoBin10 = 170*(1-exp(-0.01*maximoBin10*300));
+     VentanaSingleton::instance()->setBin1(maximoBin1);
+     VentanaSingleton::instance()->setBin2(maximoBin2);
+     VentanaSingleton::instance()->setBin3(maximoBin3);
+     VentanaSingleton::instance()->setBin4(maximoBin4);
+     VentanaSingleton::instance()->setBin5(maximoBin5);
+     VentanaSingleton::instance()->setBin6(maximoBin6);
+     VentanaSingleton::instance()->setBin7(maximoBin7);
+     VentanaSingleton::instance()->setBin8(maximoBin8);
+     VentanaSingleton::instance()->setBin9(maximoBin9);
+     VentanaSingleton::instance()->setBin10(maximoBin10);
     //Se libera la memoria.
     fftw_destroy_plan(dft);
     fftw_free(x);
@@ -767,20 +779,20 @@ void controlVolume::filter(int blockSize, int volumeGain,int g32,int g64,int g12
     //out es la y(n) para cada filtro
     //hk es el filtro en el dominio de la frecuencia
     //temporal es un bloque del último proceso de filtrado, usado en solapamiento y suma
-    //filtroGeneral(blockSize,g32,in,pf32,f32,datos32);
-    //filtroGeneral(blockSize,g64,in,pf64,f64,datos64);
-    //filtroGeneral(blockSize,g125,in,pf125,f125,datos125);
+    filtroGeneral(blockSize,g32,in,pf32,f32,datos32);
+    filtroGeneral(blockSize,g64,in,pf64,f64,datos64);
+    filtroGeneral(blockSize,g125,in,pf125,f125,datos125);
     filtroGeneral(blockSize,g250,in,pf250,f250,datos250);
     filtroGeneral(blockSize,g500,in,pf500,f500,datos500);
     filtroGeneral(blockSize,g1k,in,pf1k,f1k,datos1k);
     filtroGeneral(blockSize,g2k,in,pf2k,f2k,datos2k);
-    //filtroGeneral(blockSize,g4k,in,pf4k,f4k,datos4k);
-    //filtroGeneral(blockSize,g8k,in,pf8k,f8k,datos8k);
-    //filtroGeneral(blockSize,g16k,in,pf16k,f16k,datos16k);
+    filtroGeneral(blockSize,g4k,in,pf4k,f4k,datos4k);
+    filtroGeneral(blockSize,g8k,in,pf8k,f8k,datos8k);
+    filtroGeneral(blockSize,g16k,in,pf16k,f16k,datos16k);
 
     for (int n=0; n<blockSize;++n){
 
-        out[n] = 0.04 * (volumeGain)*(/*pf32[n]+pf64[n]+pf125[n]+*/pf250[n]+pf500[n]+pf1k[n]+pf2k[n]/*+pf4k[n]+pf8k[n]+pf16k[n]*/);
+        out[n] = 0.04 * (volumeGain)*(pf32[n]+pf64[n]+pf125[n]+pf250[n]+pf500[n]+pf1k[n]+pf2k[n]+pf4k[n]+pf8k[n]+pf16k[n]);
         //out[n] = 0.01 * (volumeGain)*(salidaReverb[n]);
     }
 
