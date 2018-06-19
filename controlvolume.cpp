@@ -37,7 +37,7 @@ using namespace std;
 #define REAL 0
 #define IMAG 1
 #define PI 3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128481
-#define N 2048
+#define N 8192
 
 /*
  * Constructor
@@ -63,18 +63,18 @@ controlVolume::controlVolume(){
     inicio = true;
 
     // Arreglos donde se almacenan los M-1 valores de la salida que se generan al aplicar el metodo de solapamiento y suma.
-    datos32 = new float[N-1024];
-    datos64 = new float[N-1024];
-    datos125 = new float[N-1024];
-    datos250 = new float[N-1024];
-    datos500 = new float[N-1024];
-    datos1k = new float[N-1024];
-    datos2k = new float[N-1024];
-    datos4k = new float[N-1024];
-    datos8k = new float[N-1024];
-    datos16k = new float[N-1024];
+    datos32 = new float[N/2];
+    datos64 = new float[N/2];
+    datos125 = new float[N/2];
+    datos250 = new float[N/2];
+    datos500 = new float[N/2];
+    datos1k = new float[N/2];
+    datos2k = new float[N/2];
+    datos4k = new float[N/2];
+    datos8k = new float[N/2];
+    datos16k = new float[N/2];
 
-    datosReverb = new float[N-1024];
+    datosReverb = new float[N/2];
 
 
     //Inicializacion de los valores en los punteros de tipo double[2048][2]
@@ -138,9 +138,9 @@ void controlVolume::inicializarHReverb(fftw_complex *salidaHk)
 
 void controlVolume::inicializarVentana(fftw_complex *salidaW)
 {
-    for (int i = 0; i<1024; i++)
+    for (int i = 0; i<N/2; i++)
     {
-        salidaW[i][REAL] = (1.0/2.0)*(cos((2*PI*i)/(1024)));
+        salidaW[i][REAL] = (1.0/2.0)*(cos((2*PI*i)/(N/2)));
         salidaW[i][IMAG] = 0.0;
     }
 }
@@ -186,7 +186,7 @@ void controlVolume::inicializarHK(fftw_complex *puntero, double G, double a_0, d
     h[6][REAL] = G * g_0 + b_1 * h[5][REAL] + c_1 * h[4][REAL] + d_1 * h[3][REAL] + e_1 * h[2][REAL] + f_1 * h[1][REAL] + g_1 * h[0][REAL];
 
     //De h(7) en adelante solo depende de las salidas anteriores. Por lo que recursivamente se calculan los demas valores.
-    for(int i = 7; i<1024; i++){
+    for(int i = 7; i<N/2; i++){
 
 
         h[i][REAL] = b_1 * h[i-1][REAL] + c_1 * h[i-2][REAL] + d_1 * h[i-3][REAL] + e_1 * h[i-4][REAL] + f_1 * h[i-5][REAL] + g_1 * h[i-6][REAL];
@@ -194,7 +194,7 @@ void controlVolume::inicializarHK(fftw_complex *puntero, double G, double a_0, d
     }
 
     //Se agregan ceros hasta que el largo de h(n) sea igual a L+M-1 = 2048.
-    for(int i = 1024;i<N;i++){
+    for(int i = N/2;i<N;i++){
 
         h[i][REAL] = 0.0;
 
@@ -606,7 +606,7 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
 
 void controlVolume::obtenerEspectroPoder(float* in)
 {
-    int blocksize = 1024;
+    int blocksize = N/2;
     float maximoBin1 = 0.0;
     float maximoBin2 = 0.0;
     float maximoBin3 = 0.0;
@@ -657,7 +657,7 @@ void controlVolume::obtenerEspectroPoder(float* in)
         {
             break;
         }
-        float frecuenciaAnalogica = (44100.0/1024.0)*i;
+        float frecuenciaAnalogica = (44100.0/(N/2))*i;
         if (frecuenciaAnalogica < 40)
         {
             if (magnitudX[i]>maximoBin1)
