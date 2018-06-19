@@ -772,3 +772,31 @@ void MainWindow::paintEvent(QPaintEvent *e)//funcion encargada de graficar el ni
     painter.drawRect(rec10);
 
 }
+
+void MainWindow::on_radioReverb_toggled(bool checked)
+{
+    if (checked)
+    {
+        VentanaSingleton::instance()->setReverbActivo(true);
+        cout << "Reverb activado" << endl;
+    }
+    else
+    {
+        VentanaSingleton::instance()->setReverbActivo(false);
+        cout << "Reverb desactivado" << endl;
+    }
+}
+
+void MainWindow::on_radioBarras_toggled(bool checked)
+{
+    if (checked)
+    {
+        VentanaSingleton::instance()->setBarrasActivo(true);
+        cout << "Barras activadas activadas" << endl;
+    }
+    else
+    {
+        VentanaSingleton::instance()->setBarrasActivo(false);
+        cout << "Barras activadas desactivadas" << endl;
+    }
+}

@@ -14,6 +14,9 @@ class VentanaSingleton
     int bin9;
     int bin10;
 
+    bool reverbActivo;
+    bool barrasActivas;
+
     static VentanaSingleton *s_instance;
     VentanaSingleton(int bin1n=1, int bin2n=1, int bin3n=1, int bin4n=1, int bin5n=1, int bin6n=1, int bin7n=1, int bin8n=1, int bin9n=1, int bin10n=1)
     {
@@ -109,6 +112,27 @@ class VentanaSingleton
     {
         bin10 = v;
     }
+
+    bool getReverbActivo()
+    {
+        return reverbActivo;
+    }
+
+    void setReverbActivo(bool value)
+    {
+        reverbActivo = value;
+    }
+
+    bool getBarrasActivo()
+    {
+        return barrasActivas;
+    }
+
+    void setBarrasActivo(bool value)
+    {
+        barrasActivas = value;
+    }
+
     static VentanaSingleton *instance()
     {
         if (!s_instance)

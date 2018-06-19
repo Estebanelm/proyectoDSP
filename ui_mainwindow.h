@@ -18,6 +18,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
@@ -56,7 +57,7 @@ public:
     QLabel *label_13;
     QSpacerItem *verticalSpacer_4;
     QSpacerItem *horizontalSpacer;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QHBoxLayout *horizontalLayout_2;
     QSlider *volumeSlider;
     QSlider *f32Slider;
@@ -69,7 +70,7 @@ public:
     QSlider *f4kSlider;
     QSlider *f8kSlider;
     QSlider *f16kSlider;
-    QWidget *widget1;
+    QWidget *layoutWidget1;
     QHBoxLayout *horizontalLayout;
     QLabel *label_2;
     QLabel *label;
@@ -84,6 +85,8 @@ public:
     QLabel *label_10;
     QToolButton *fileButton;
     QLineEdit *fileEdit;
+    QRadioButton *radioReverb;
+    QRadioButton *radioBarras;
     QMenuBar *menuBar;
     QMenu *menuPreset;
     QMenu *menuFile;
@@ -240,15 +243,15 @@ public:
 
         horizontalLayout_4->addItem(horizontalSpacer);
 
-        widget = new QWidget(centralWidget);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(10, 290, 791, 151));
-        horizontalLayout_2 = new QHBoxLayout(widget);
+        layoutWidget = new QWidget(centralWidget);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(10, 290, 791, 151));
+        horizontalLayout_2 = new QHBoxLayout(layoutWidget);
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
-        volumeSlider = new QSlider(widget);
+        volumeSlider = new QSlider(layoutWidget);
         volumeSlider->setObjectName(QStringLiteral("volumeSlider"));
         volumeSlider->setMaximum(50);
         volumeSlider->setValue(25);
@@ -256,7 +259,7 @@ public:
 
         horizontalLayout_2->addWidget(volumeSlider);
 
-        f32Slider = new QSlider(widget);
+        f32Slider = new QSlider(layoutWidget);
         f32Slider->setObjectName(QStringLiteral("f32Slider"));
         QPalette palette1;
         palette1.setBrush(QPalette::Active, QPalette::Text, brush);
@@ -278,7 +281,7 @@ public:
 
         horizontalLayout_2->addWidget(f32Slider);
 
-        f64Slider = new QSlider(widget);
+        f64Slider = new QSlider(layoutWidget);
         f64Slider->setObjectName(QStringLiteral("f64Slider"));
         f64Slider->setMaximum(50);
         f64Slider->setValue(25);
@@ -288,7 +291,7 @@ public:
 
         horizontalLayout_2->addWidget(f64Slider);
 
-        f125Slider = new QSlider(widget);
+        f125Slider = new QSlider(layoutWidget);
         f125Slider->setObjectName(QStringLiteral("f125Slider"));
         f125Slider->setMaximum(50);
         f125Slider->setValue(25);
@@ -298,7 +301,7 @@ public:
 
         horizontalLayout_2->addWidget(f125Slider);
 
-        f250Slider = new QSlider(widget);
+        f250Slider = new QSlider(layoutWidget);
         f250Slider->setObjectName(QStringLiteral("f250Slider"));
         f250Slider->setMaximum(50);
         f250Slider->setSliderPosition(25);
@@ -308,7 +311,7 @@ public:
 
         horizontalLayout_2->addWidget(f250Slider);
 
-        f500Slider = new QSlider(widget);
+        f500Slider = new QSlider(layoutWidget);
         f500Slider->setObjectName(QStringLiteral("f500Slider"));
         f500Slider->setMaximum(50);
         f500Slider->setValue(25);
@@ -318,7 +321,7 @@ public:
 
         horizontalLayout_2->addWidget(f500Slider);
 
-        f1kSlider = new QSlider(widget);
+        f1kSlider = new QSlider(layoutWidget);
         f1kSlider->setObjectName(QStringLiteral("f1kSlider"));
         f1kSlider->setMaximum(50);
         f1kSlider->setValue(25);
@@ -328,7 +331,7 @@ public:
 
         horizontalLayout_2->addWidget(f1kSlider);
 
-        f2kSlider = new QSlider(widget);
+        f2kSlider = new QSlider(layoutWidget);
         f2kSlider->setObjectName(QStringLiteral("f2kSlider"));
         f2kSlider->setMaximum(50);
         f2kSlider->setValue(25);
@@ -339,7 +342,7 @@ public:
 
         horizontalLayout_2->addWidget(f2kSlider);
 
-        f4kSlider = new QSlider(widget);
+        f4kSlider = new QSlider(layoutWidget);
         f4kSlider->setObjectName(QStringLiteral("f4kSlider"));
         f4kSlider->setMaximum(50);
         f4kSlider->setValue(25);
@@ -349,7 +352,7 @@ public:
 
         horizontalLayout_2->addWidget(f4kSlider);
 
-        f8kSlider = new QSlider(widget);
+        f8kSlider = new QSlider(layoutWidget);
         f8kSlider->setObjectName(QStringLiteral("f8kSlider"));
         f8kSlider->setMaximum(50);
         f8kSlider->setValue(25);
@@ -359,7 +362,7 @@ public:
 
         horizontalLayout_2->addWidget(f8kSlider);
 
-        f16kSlider = new QSlider(widget);
+        f16kSlider = new QSlider(layoutWidget);
         f16kSlider->setObjectName(QStringLiteral("f16kSlider"));
         f16kSlider->setMaximum(50);
         f16kSlider->setValue(25);
@@ -369,15 +372,15 @@ public:
 
         horizontalLayout_2->addWidget(f16kSlider);
 
-        widget1 = new QWidget(centralWidget);
-        widget1->setObjectName(QStringLiteral("widget1"));
-        widget1->setGeometry(QRect(10, 450, 791, 19));
-        horizontalLayout = new QHBoxLayout(widget1);
+        layoutWidget1 = new QWidget(centralWidget);
+        layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
+        layoutWidget1->setGeometry(QRect(10, 450, 791, 19));
+        horizontalLayout = new QHBoxLayout(layoutWidget1);
         horizontalLayout->setSpacing(6);
         horizontalLayout->setContentsMargins(11, 11, 11, 11);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        label_2 = new QLabel(widget1);
+        label_2 = new QLabel(layoutWidget1);
         label_2->setObjectName(QStringLiteral("label_2"));
         QPalette palette2;
         QBrush brush5(QColor(170, 255, 0, 255));
@@ -389,61 +392,61 @@ public:
 
         horizontalLayout->addWidget(label_2);
 
-        label = new QLabel(widget1);
+        label = new QLabel(layoutWidget1);
         label->setObjectName(QStringLiteral("label"));
         label->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label);
 
-        label_3 = new QLabel(widget1);
+        label_3 = new QLabel(layoutWidget1);
         label_3->setObjectName(QStringLiteral("label_3"));
         label_3->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_3);
 
-        label_11 = new QLabel(widget1);
+        label_11 = new QLabel(layoutWidget1);
         label_11->setObjectName(QStringLiteral("label_11"));
         label_11->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_11);
 
-        label_4 = new QLabel(widget1);
+        label_4 = new QLabel(layoutWidget1);
         label_4->setObjectName(QStringLiteral("label_4"));
         label_4->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_4);
 
-        label_5 = new QLabel(widget1);
+        label_5 = new QLabel(layoutWidget1);
         label_5->setObjectName(QStringLiteral("label_5"));
         label_5->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_5);
 
-        label_6 = new QLabel(widget1);
+        label_6 = new QLabel(layoutWidget1);
         label_6->setObjectName(QStringLiteral("label_6"));
         label_6->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_6);
 
-        label_7 = new QLabel(widget1);
+        label_7 = new QLabel(layoutWidget1);
         label_7->setObjectName(QStringLiteral("label_7"));
         label_7->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_7);
 
-        label_8 = new QLabel(widget1);
+        label_8 = new QLabel(layoutWidget1);
         label_8->setObjectName(QStringLiteral("label_8"));
         label_8->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_8);
 
-        label_9 = new QLabel(widget1);
+        label_9 = new QLabel(layoutWidget1);
         label_9->setObjectName(QStringLiteral("label_9"));
         label_9->setAlignment(Qt::AlignCenter);
 
         horizontalLayout->addWidget(label_9);
 
-        label_10 = new QLabel(widget1);
+        label_10 = new QLabel(layoutWidget1);
         label_10->setObjectName(QStringLiteral("label_10"));
         label_10->setAlignment(Qt::AlignCenter);
 
@@ -457,7 +460,22 @@ public:
         fileEdit->setObjectName(QStringLiteral("fileEdit"));
         fileEdit->setEnabled(true);
         fileEdit->setGeometry(QRect(11, 11, 751, 25));
+        radioReverb = new QRadioButton(centralWidget);
+        radioReverb->setObjectName(QStringLiteral("radioReverb"));
+        radioReverb->setGeometry(QRect(20, 510, 21, 23));
+        radioReverb->setAutoExclusive(false);
+        radioBarras = new QRadioButton(centralWidget);
+        radioBarras->setObjectName(QStringLiteral("radioBarras"));
+        radioBarras->setGeometry(QRect(780, 530, 16, 23));
+        radioBarras->setAutoExclusive(false);
         MainWindow->setCentralWidget(centralWidget);
+        verticalLayoutWidget->raise();
+        layoutWidget->raise();
+        layoutWidget->raise();
+        fileEdit->raise();
+        fileButton->raise();
+        radioReverb->raise();
+        radioBarras->raise();
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 813, 22));
@@ -537,6 +555,8 @@ public:
         label_9->setText(QApplication::translate("MainWindow", "8k", nullptr));
         label_10->setText(QApplication::translate("MainWindow", "16k", nullptr));
         fileButton->setText(QApplication::translate("MainWindow", "...", nullptr));
+        radioReverb->setText(QApplication::translate("MainWindow", "RadioButton", nullptr));
+        radioBarras->setText(QApplication::translate("MainWindow", "RadioButton", nullptr));
         menuPreset->setTitle(QApplication::translate("MainWindow", "Preset", nullptr));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", nullptr));
     } // retranslateUi

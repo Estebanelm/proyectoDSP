@@ -765,24 +765,49 @@ void controlVolume::filter(int blockSize, int volumeGain,int g32,int g64,int g12
     //temporal es un bloque del último proceso de filtrado, usado en solapamiento y suma
     //filtroGeneral(blockSize,g32,in,pf32,f32,datos32);
     //filtroGeneral(blockSize,g64,in,pf64,f64,datos64);
-    //filtroGeneral(blockSize,g125,in,pf125,f125,datos125);
-    //filtroGeneral(blockSize,g250,in,pf250,f250,datos250);
-    //filtroGeneral(blockSize,g500,in,pf500,f500,datos500);
-    //filtroGeneral(blockSize,g1k,in,pf1k,f1k,datos1k);
-    //filtroGeneral(blockSize,g2k,in,pf2k,f2k,datos2k);
+    filtroGeneral(blockSize,g125,in,pf125,f125,datos125);
+    filtroGeneral(blockSize,g250,in,pf250,f250,datos250);
+    filtroGeneral(blockSize,g500,in,pf500,f500,datos500);
+    filtroGeneral(blockSize,g1k,in,pf1k,f1k,datos1k);
+    filtroGeneral(blockSize,g2k,in,pf2k,f2k,datos2k);
     //filtroGeneral(blockSize,g4k,in,pf4k,f4k,datos4k);
     //filtroGeneral(blockSize,g8k,in,pf8k,f8k,datos8k);
     //filtroGeneral(blockSize,g16k,in,pf16k,f16k,datos16k);
 
-    filtroGeneral(blockSize, 25, in, salidaReverb, hkeverb, datosReverb);
-
-    obtenerEspectroPoder(in);
-
-    // Se define cada elemento de la salida como la suma de las salidas de los filtros para un n, escalado por una constante.
     for (int n=0; n<blockSize;++n){
 
-        //out[n] = 0.02 * (volumeGain)*(pf32[n]+pf64[n]+pf125[n]+pf250[n]+pf500[n]+pf1k[n]+pf2k[n]+pf4k[n]+pf8k[n]+pf16k[n]);
-        out[n] = 0.01 * (volumeGain)*(salidaReverb[n]);
+        out[n] = 0.04 * (volumeGain)*(/*pf32[n]+pf64[n]+*/pf125[n]+pf250[n]+pf500[n]+pf1k[n]+pf2k[n]/*+pf4k[n]+pf8k[n]+pf16k[n]*/);
+        //out[n] = 0.01 * (volumeGain)*(salidaReverb[n]);
+    }
+
+    if (VentanaSingleton::instance()->getReverbActivo())
+    {
+        filtroGeneral(blockSize, 25, out, salidaReverb, hkeverb, datosReverb);
+        // Se define cada elemento de la salida como la suma de las salidas de los filtros para un n, escalado por una constante.
+        for (int n=0; n<blockSize;++n){
+
+            //out[n] = 0.02 * (volumeGain)*(pf32[n]+pf64[n]+pf125[n]+pf250[n]+pf500[n]+pf1k[n]+pf2k[n]+pf4k[n]+pf8k[n]+pf16k[n]);
+            out[n] = 0.04 * (volumeGain)*(salidaReverb[n]);
+        }
+
+    }
+
+    if (VentanaSingleton::instance()->getBarrasActivo())
+    {
+        obtenerEspectroPoder(out);
+    }
+    else
+    {
+        VentanaSingleton::instance()->setBin1(1);
+        VentanaSingleton::instance()->setBin2(1);
+        VentanaSingleton::instance()->setBin3(1);
+        VentanaSingleton::instance()->setBin4(1);
+        VentanaSingleton::instance()->setBin5(1);
+        VentanaSingleton::instance()->setBin6(1);
+        VentanaSingleton::instance()->setBin7(1);
+        VentanaSingleton::instance()->setBin8(1);
+        VentanaSingleton::instance()->setBin9(1);
+        VentanaSingleton::instance()->setBin10(1);
     }
 
     //Al realizar el procedimiento una vez se define que ya no es el inicio de la cancion.

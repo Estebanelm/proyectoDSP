@@ -118,6 +118,8 @@ private:
      void on_actionOpen_wav_triggered();
      void on_actionFlat_triggered();
      void on_actionZero_triggered();
+     void on_radioReverb_toggled(bool checked);
+     void on_radioBarras_toggled(bool checked);
 };
 
 
