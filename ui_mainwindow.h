@@ -87,6 +87,8 @@ public:
     QLineEdit *fileEdit;
     QRadioButton *radioReverb;
     QRadioButton *radioBarras;
+    QLabel *label_14;
+    QLabel *label_15;
     QMenuBar *menuBar;
     QMenu *menuPreset;
     QMenu *menuFile;
@@ -467,9 +469,25 @@ public:
         radioReverb->setAutoExclusive(false);
         radioBarras = new QRadioButton(centralWidget);
         radioBarras->setObjectName(QStringLiteral("radioBarras"));
-        radioBarras->setGeometry(QRect(780, 530, 16, 23));
+        radioBarras->setGeometry(QRect(770, 510, 16, 23));
         radioBarras->setChecked(true);
         radioBarras->setAutoExclusive(false);
+        label_14 = new QLabel(centralWidget);
+        label_14->setObjectName(QStringLiteral("label_14"));
+        label_14->setGeometry(QRect(10, 540, 66, 17));
+        QPalette palette3;
+        palette3.setBrush(QPalette::Active, QPalette::WindowText, brush5);
+        palette3.setBrush(QPalette::Inactive, QPalette::WindowText, brush5);
+        palette3.setBrush(QPalette::Disabled, QPalette::WindowText, brush2);
+        label_14->setPalette(palette3);
+        label_15 = new QLabel(centralWidget);
+        label_15->setObjectName(QStringLiteral("label_15"));
+        label_15->setGeometry(QRect(740, 540, 66, 17));
+        QPalette palette4;
+        palette4.setBrush(QPalette::Active, QPalette::WindowText, brush5);
+        palette4.setBrush(QPalette::Inactive, QPalette::WindowText, brush5);
+        palette4.setBrush(QPalette::Disabled, QPalette::WindowText, brush2);
+        label_15->setPalette(palette4);
         MainWindow->setCentralWidget(centralWidget);
         verticalLayoutWidget->raise();
         layoutWidget->raise();
@@ -478,6 +496,8 @@ public:
         fileButton->raise();
         radioReverb->raise();
         radioBarras->raise();
+        label_14->raise();
+        label_15->raise();
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 813, 22));
@@ -559,6 +579,8 @@ public:
         fileButton->setText(QApplication::translate("MainWindow", "...", nullptr));
         radioReverb->setText(QApplication::translate("MainWindow", "RadioButton", nullptr));
         radioBarras->setText(QApplication::translate("MainWindow", "RadioButton", nullptr));
+        label_14->setText(QApplication::translate("MainWindow", "Reverb", nullptr));
+        label_15->setText(QApplication::translate("MainWindow", "Visualizer", nullptr));
         menuPreset->setTitle(QApplication::translate("MainWindow", "Preset", nullptr));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", nullptr));
     } // retranslateUi

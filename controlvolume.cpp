@@ -102,24 +102,32 @@ controlVolume::~controlVolume(){
 
 void controlVolume::inicializarHReverb(fftw_complex *salidaHk)
 {
+
+    //Alocar espacio para el h(n)
     fftw_complex *h = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+
+    //Declaramos el archivo
     QFile file("reverbhn");
     if(!file.open(QIODevice::ReadOnly)) {
         std::cerr << "Error reading file" << std::endl;
     }
+    //Obtiene el archivo como una lista de caracteres
     QTextStream in(&file);
+    //Esta variable contiene cada uno de los valores
     QStringList fields;
+    //Hay que iterar el archivo hasta el final línea por línea, aunque solo sea una en este caso
     while(!in.atEnd()) {
-        QString line = in.readLine();
-        fields = line.split("\t");
+        QString line = in.readLine(); //Leer línea
+        fields = line.split("\t"); //Separar la línea en valores, el separador son tabs (\t)
     }
+    //Rellenar el h(n) con los valores obtenidos hasta 4095 (N/2-1)
     for (int i = 0; i<N/2+1; i++)
     {
         QString str = fields.at(i);
         h[i][REAL] = str.toFloat();
         h[i][IMAG] = 0.0;
     }
-
+    //Se rellena el resto hasta N con ceros
     for (int i = N/2+1; i<N; i++)
     {
         h[i][REAL] = 0.0;
@@ -149,8 +157,6 @@ void controlVolume::inicializarVentana(fftw_complex *salidaW)
         constanteUVentana += pow((1.0/2.0)*(cos((2*PI*i)/(N/2))),2);
     }
     constanteUVentana = constanteUVentana/(N/2);
-
-    //Calculo de la constante U
 }
 
 /**
@@ -600,6 +606,8 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
 void controlVolume::obtenerEspectroPoder(float* in)
 {
     int blocksize = N/2;
+
+    //Contienen el valor máximo para cada barra
     float maximoBin1 = 0.0;
     float maximoBin2 = 0.0;
     float maximoBin3 = 0.0;
@@ -643,16 +651,16 @@ void controlVolume::obtenerEspectroPoder(float* in)
 
      for(int i = 0; i < blocksize/2; i++){
 
+         //Aplicando la fórmula de Welch
          float num = (1/(blocksize*constanteUVentana))*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
          magnitudX[i] = num;
-         //magnitudX[i] = (1.0/blocksize)*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
-        if (i>509)
-        {
-            break;
-        }
+         //Se calcula la frecuencia de cada muestra
         float frecuenciaAnalogica = (44100.0/(N/2))*i;
+
+        //Dependiendo de la frecuencia obtenida se decide la barra a la que pertenece
         if (frecuenciaAnalogica < 50)
         {
+            //Revisa si el valor es el máximo que se ha encontrado
             if (magnitudX[i]>maximoBin1)
                 maximoBin1 = magnitudX[i];
         }
@@ -703,6 +711,7 @@ void controlVolume::obtenerEspectroPoder(float* in)
         }
      }
 
+     //Se aplica la fórmula exponencial para obtener el tamaño de la barra
      maximoBin1 = 170*(1-exp(-0.01*maximoBin1*300));
      maximoBin2 = 170*(1-exp(-0.01*maximoBin2*300));
      maximoBin3 = 170*(1-exp(-0.01*maximoBin3*300));
@@ -713,6 +722,8 @@ void controlVolume::obtenerEspectroPoder(float* in)
      maximoBin8 = 170*(1-exp(-0.01*maximoBin8*300));
      maximoBin9 = 170*(1-exp(-0.01*maximoBin9*300));
      maximoBin10 = 170*(1-exp(-0.01*maximoBin10*300));
+
+     //Se pasan los valores al singleton
      VentanaSingleton::instance()->setBin1(maximoBin1);
      VentanaSingleton::instance()->setBin2(maximoBin2);
      VentanaSingleton::instance()->setBin3(maximoBin3);
@@ -723,6 +734,7 @@ void controlVolume::obtenerEspectroPoder(float* in)
      VentanaSingleton::instance()->setBin8(maximoBin8);
      VentanaSingleton::instance()->setBin9(maximoBin9);
      VentanaSingleton::instance()->setBin10(maximoBin10);
+
     //Se libera la memoria.
     fftw_destroy_plan(dft);
     fftw_free(x);
@@ -788,26 +800,26 @@ void controlVolume::filter(int blockSize, int volumeGain,int g32,int g64,int g12
         //out[n] = 0.01 * (volumeGain)*(salidaReverb[n]);
     }
 
+    //Si el botón de reverb está activado, se aplica el filtro, si no, no se hace nada
     if (VentanaSingleton::instance()->getReverbActivo())
     {
         if(inicio){
             inicio = false;
         }
         filtroGeneral(blockSize, 10, out, salidaReverb, hkeverb, datosReverb);
-        // Se define cada elemento de la salida como la suma de las salidas de los filtros para un n, escalado por una constante.
+        // La salida va a ser el filtro multiplicado por una constante
         for (int n=0; n<blockSize;++n){
-
-            //out[n] = 0.02 * (volumeGain)*(pf32[n]+pf64[n]+pf125[n]+pf250[n]+pf500[n]+pf1k[n]+pf2k[n]+pf4k[n]+pf8k[n]+pf16k[n]);
-            out[n] = 0.02 * (volumeGain)*(salidaReverb[n]);
+            out[n] = 0.03 * (volumeGain)*(salidaReverb[n]);
         }
 
     }
 
+    // Si el botón de visualizador está activo, obtiene el espectro de poder y muestra las barras
     if (VentanaSingleton::instance()->getBarrasActivo())
     {
         obtenerEspectroPoder(out);
     }
-    else
+    else // Si no, entonces deja las barras en el mínimo
     {
         VentanaSingleton::instance()->setBin1(1);
         VentanaSingleton::instance()->setBin2(1);

@@ -69,7 +69,9 @@ MainWindow::MainWindow(QWidget *parent) :
      */
     timer_ = new QTimer(this);
     connect(timer_, SIGNAL(timeout()), this, SLOT(update()));
-    timer_->start(250);
+
+    //Este puede verse como el tiempo de refrescado
+    timer_->start(100);
 
     dsp_ = new dspSystem;
     jack::init(dsp_);
@@ -497,7 +499,6 @@ void MainWindow::on_actionZero_triggered()
 void MainWindow::paintEvent(QPaintEvent *e)//funcion encargada de graficar el nivel de ganancia
 {
 
-    int bottom = 750;
     // Se definen los puntos donde estaran el centro de cada banda.
     QPoint centro;
     QPoint centro2;
@@ -698,6 +699,7 @@ void MainWindow::paintEvent(QPaintEvent *e)//funcion encargada de graficar el ni
     myPath.lineTo(pI10);
     painter.drawPath(myPath);
 
+    //Obtener el tamaño de las barras del visualizador por medio de la clase singleton
     int bar1size = 1 + VentanaSingleton::instance()->getBin1();
     int bar2size = 1 + VentanaSingleton::instance()->getBin2();
     int bar3size = 1 + VentanaSingleton::instance()->getBin3();
@@ -709,7 +711,14 @@ void MainWindow::paintEvent(QPaintEvent *e)//funcion encargada de graficar el ni
     int bar9size = 1 + VentanaSingleton::instance()->getBin9();
     int bar10size = 1 + VentanaSingleton::instance()->getBin10();
     //cout << "el tamaño de las barras es "<<bar1size<< " " <<bar2size<< " " <<bar3size<< " " <<bar4size<< " " <<bar5size<< " " <<bar6size<< " " << bar7size<< " " << bar8size<< " " << endl;
+
+    //Esta variable indica la base de las barras
+    int bottom = 750;
+
+    //Las varras van a ser rellenadas de verde
     painter.setBrush(Qt::green);
+
+    //Explicacion de la definicion de las barras
     QRect rec1;
     rec1.setX(115);
     rec1.setY(bottom-bar1size);
