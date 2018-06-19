@@ -463,10 +463,12 @@ public:
         radioReverb = new QRadioButton(centralWidget);
         radioReverb->setObjectName(QStringLiteral("radioReverb"));
         radioReverb->setGeometry(QRect(20, 510, 21, 23));
+        radioReverb->setChecked(true);
         radioReverb->setAutoExclusive(false);
         radioBarras = new QRadioButton(centralWidget);
         radioBarras->setObjectName(QStringLiteral("radioBarras"));
         radioBarras->setGeometry(QRect(780, 530, 16, 23));
+        radioBarras->setChecked(true);
         radioBarras->setAutoExclusive(false);
         MainWindow->setCentralWidget(centralWidget);
         verticalLayoutWidget->raise();

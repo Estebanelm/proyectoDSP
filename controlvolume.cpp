@@ -112,17 +112,19 @@ void controlVolume::inicializarHReverb(fftw_complex *salidaHk)
         QString line = in.readLine();
         fields = line.split("\t");
     }
-    for (int i = 0; i<1024; i++)
+    for (int i = 0; i<N; i++)
     {
         QString str = fields.at(i);
         h[i][REAL] = str.toFloat();
         h[i][IMAG] = 0.0;
     }
+    /*
     for (int i = 1024; i<N; i++)
     {
         h[i][REAL] = 0.0;
         h[i][IMAG] = 0.0;
     }
+    */
     file.close();
     //Se aplica la DFT.
     fftw_plan plan = fftw_plan_dft_1d(N,h,salidaHk,FFTW_FORWARD,FFTW_ESTIMATE);
@@ -491,6 +493,7 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
     double Div = static_cast<double>(dobleBloque);
 
     if(inicio){
+    cout << "Se agregan 1s a la entrada" << endl;
         //Si es el inicio de la cancion los valores de la salida se guardan directamente
         for(int i=0; i<blockSize;i++){
 
@@ -520,21 +523,9 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
 
 //Solapamiento y almacenamiento/////////////////////
 
-/*
-    //Hay que agregar los 1024 datos entrantes pero en la parte final del bloque
-    //Propuesta
-
-    for(int i = blockSize; i < dobleBloque; i++){
-
-        x[i][REAL] = in[i];
-        x[i][IMAG] = 0.0;
-
-    }
-
-
     //Acá habría que agregar la entrada anterior en vez de 0s.
     //Propuesta
-
+/*
     if(inicio){
         cout << "Se agregan 1s a la entrada" << endl;
         for(int i = 0; i < blockSize; i++){
@@ -552,6 +543,19 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
 
         }
     }
+
+    //Hay que agregar los 1024 datos entrantes pero en la parte final del bloque
+    //Propuesta
+
+    for(int i = blockSize; i < dobleBloque; i++){
+
+        x[i][REAL] = in[i];
+        x[i][IMAG] = 0.0;
+
+    }
+
+
+
 
     //Se aplica la DFT a x(n) para obtener X(k).
     fftw_plan dft = fftw_plan_dft_1d(dobleBloque,x,X,FFTW_FORWARD,FFTW_ESTIMATE);
@@ -585,7 +589,7 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
 
     for(int i=0; i<blockSize;i++){
 
-        temporal[i] = static_cast<float>(in[i]);
+        temporal[i] = static_cast<float>(x[i][REAL]);
 
     }
 */
@@ -765,7 +769,7 @@ void controlVolume::filter(int blockSize, int volumeGain,int g32,int g64,int g12
     //temporal es un bloque del último proceso de filtrado, usado en solapamiento y suma
     //filtroGeneral(blockSize,g32,in,pf32,f32,datos32);
     //filtroGeneral(blockSize,g64,in,pf64,f64,datos64);
-    filtroGeneral(blockSize,g125,in,pf125,f125,datos125);
+    //filtroGeneral(blockSize,g125,in,pf125,f125,datos125);
     filtroGeneral(blockSize,g250,in,pf250,f250,datos250);
     filtroGeneral(blockSize,g500,in,pf500,f500,datos500);
     filtroGeneral(blockSize,g1k,in,pf1k,f1k,datos1k);
@@ -776,18 +780,21 @@ void controlVolume::filter(int blockSize, int volumeGain,int g32,int g64,int g12
 
     for (int n=0; n<blockSize;++n){
 
-        out[n] = 0.04 * (volumeGain)*(/*pf32[n]+pf64[n]+*/pf125[n]+pf250[n]+pf500[n]+pf1k[n]+pf2k[n]/*+pf4k[n]+pf8k[n]+pf16k[n]*/);
+        out[n] = 0.04 * (volumeGain)*(/*pf32[n]+pf64[n]+pf125[n]+*/pf250[n]+pf500[n]+pf1k[n]+pf2k[n]/*+pf4k[n]+pf8k[n]+pf16k[n]*/);
         //out[n] = 0.01 * (volumeGain)*(salidaReverb[n]);
     }
 
     if (VentanaSingleton::instance()->getReverbActivo())
     {
-        filtroGeneral(blockSize, 25, out, salidaReverb, hkeverb, datosReverb);
+        if(inicio){
+            inicio = false;
+        }
+        filtroGeneral(blockSize, 10, out, salidaReverb, hkeverb, datosReverb);
         // Se define cada elemento de la salida como la suma de las salidas de los filtros para un n, escalado por una constante.
         for (int n=0; n<blockSize;++n){
 
             //out[n] = 0.02 * (volumeGain)*(pf32[n]+pf64[n]+pf125[n]+pf250[n]+pf500[n]+pf1k[n]+pf2k[n]+pf4k[n]+pf8k[n]+pf16k[n]);
-            out[n] = 0.04 * (volumeGain)*(salidaReverb[n]);
+            out[n] = 0.02 * (volumeGain)*(salidaReverb[n]);
         }
 
     }
