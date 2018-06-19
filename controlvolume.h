@@ -72,6 +72,7 @@ public:
     float* datos16k;
 
     float* datosReverb;
+    float constanteUVentana;
     bool inicio;
 
     /**

@@ -139,11 +139,18 @@ void controlVolume::inicializarHReverb(fftw_complex *salidaHk)
 
 void controlVolume::inicializarVentana(fftw_complex *salidaW)
 {
+    //Rellenar el vector w(n) con los valores de la ventana
+    //Además, se realiza el cálculo de la constante U
+    constanteUVentana = 0.0;
     for (int i = 0; i<N/2; i++)
     {
         salidaW[i][REAL] = (1.0/2.0)*(cos((2*PI*i)/(N/2)));
         salidaW[i][IMAG] = 0.0;
+        constanteUVentana += pow((1.0/2.0)*(cos((2*PI*i)/(N/2))),2);
     }
+    constanteUVentana = constanteUVentana/(N/2);
+
+    //Calculo de la constante U
 }
 
 /**
