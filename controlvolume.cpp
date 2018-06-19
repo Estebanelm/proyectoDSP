@@ -113,19 +113,19 @@ void controlVolume::inicializarHReverb(fftw_complex *salidaHk)
         QString line = in.readLine();
         fields = line.split("\t");
     }
-    for (int i = 0; i<N; i++)
+    for (int i = 0; i<N/2+1; i++)
     {
         QString str = fields.at(i);
         h[i][REAL] = str.toFloat();
         h[i][IMAG] = 0.0;
     }
-    /*
-    for (int i = 1024; i<N; i++)
+
+    for (int i = N/2+1; i<N; i++)
     {
         h[i][REAL] = 0.0;
         h[i][IMAG] = 0.0;
     }
-    */
+
     file.close();
     //Se aplica la DFT.
     fftw_plan plan = fftw_plan_dft_1d(N,h,salidaHk,FFTW_FORWARD,FFTW_ESTIMATE);
@@ -194,7 +194,7 @@ void controlVolume::inicializarHK(fftw_complex *puntero, double G, double a_0, d
     h[6][REAL] = G * g_0 + b_1 * h[5][REAL] + c_1 * h[4][REAL] + d_1 * h[3][REAL] + e_1 * h[2][REAL] + f_1 * h[1][REAL] + g_1 * h[0][REAL];
 
     //De h(7) en adelante solo depende de las salidas anteriores. Por lo que recursivamente se calculan los demas valores.
-    for(int i = 7; i<N/2; i++){
+    for(int i = 7; i<(N/2)+1; i++){
 
 
         h[i][REAL] = b_1 * h[i-1][REAL] + c_1 * h[i-2][REAL] + d_1 * h[i-3][REAL] + e_1 * h[i-4][REAL] + f_1 * h[i-5][REAL] + g_1 * h[i-6][REAL];
@@ -202,7 +202,7 @@ void controlVolume::inicializarHK(fftw_complex *puntero, double G, double a_0, d
     }
 
     //Se agregan ceros hasta que el largo de h(n) sea igual a L+M-1 = 2048.
-    for(int i = N/2;i<N;i++){
+    for(int i = N/2+1;i<N;i++){
 
         h[i][REAL] = 0.0;
 
@@ -458,7 +458,7 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
     fftw_complex *X = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * dobleBloque);
     fftw_complex *Y = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * dobleBloque);
     fftw_complex *y = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * dobleBloque);
-
+/*
     //Se agregan los 1024 datos entrantes y se inicializa la parte imaginaria en cero al se valores reales.
     for(int i = 0; i < blockSize; i++){
 
@@ -480,13 +480,13 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
     //Se aplica la DFT a x(n) para obtener X(k).
     fftw_plan dft = fftw_plan_dft_1d(dobleBloque,x,X,FFTW_FORWARD,FFTW_ESTIMATE);
     fftw_execute(dft);
-
+*/
     /*Se realiza la multiplicacion de los valores complejos de X(k)H(k) = Y(k)
       A ser valores complejos dados en parte real e imaginaria se utiliza:
 
         Re{Y(k)} = Re{X(k)}*Re{H(k)} - Im{X(k)}*Im{H(k)}
         Im{Y(k)} = Re{X(k)}*Im{H(k)} + Re{H(k)}*Im{X(k)} */
-
+/*
     for(int i = 0;i<dobleBloque;i++){
 
         Y[i][REAL] = (X[i][REAL]*hk[i][REAL]) - (X[i][IMAG]*hk[i][IMAG]);
@@ -528,14 +528,11 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
         temporal[i] = static_cast<float>(y[blockSize+i][REAL]/Div);
 
     }
-
+*/
 //Solapamiento y almacenamiento/////////////////////
 
-    //Acá habría que agregar la entrada anterior en vez de 0s.
-    //Propuesta
-/*
+    //Se agrega la entrada anterior o ceros si es el inicio
     if(inicio){
-        cout << "Se agregan 1s a la entrada" << endl;
         for(int i = 0; i < blockSize; i++){
 
             x[i][REAL] = 0.0;
@@ -552,18 +549,13 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
         }
     }
 
-    //Hay que agregar los 1024 datos entrantes pero en la parte final del bloque
-    //Propuesta
-
+    //Hay que agregar los 4096 datos entrantes pero en la parte final del bloque
     for(int i = blockSize; i < dobleBloque; i++){
 
-        x[i][REAL] = in[i];
+        x[i][REAL] = in[i-blockSize];
         x[i][IMAG] = 0.0;
 
     }
-
-
-
 
     //Se aplica la DFT a x(n) para obtener X(k).
     fftw_plan dft = fftw_plan_dft_1d(dobleBloque,x,X,FFTW_FORWARD,FFTW_ESTIMATE);
@@ -583,24 +575,17 @@ void controlVolume::filtroGeneral(int blockSize, int volumeGain, float *in, floa
     double Div = static_cast<double>(dobleBloque);
 
     //Luego de aplicar la DFT y la IDFT se debe tomar solo la última parte de la salida de esta
-    //Propuesta
-
     for(int i=0; i<blockSize;i++){
         double salida = y[i+blockSize][REAL] / Div;
         salida = salida * volumeGain * 0.02;
         out[i] = salida;
-
     }
 
-    //Este temporal debe ser la entrada anterior, por lo que sería mejor guardarla entera.
-    //Propuesta
+    //Se agregan los datos de la última entrada
+    for(int i = blockSize; i < dobleBloque; i++){
 
-    for(int i=0; i<blockSize;i++){
-
-        temporal[i] = static_cast<float>(x[i][REAL]);
-
+        temporal[i-blockSize] = static_cast<float>(x[i][REAL]);
     }
-*/
 
     //Se libera la memoria.
     fftw_destroy_plan(dft);
