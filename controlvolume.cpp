@@ -658,7 +658,7 @@ void controlVolume::obtenerEspectroPoder(float* in)
 
      for(int i = 0; i < blocksize/2; i++){
 
-         float num = (1/(blocksize*0.1875))*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
+         float num = (1/(blocksize*constanteUVentana))*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
          magnitudX[i] = num;
          //magnitudX[i] = (1.0/blocksize)*(static_cast<float>(X[i][REAL])*static_cast<float>(X[i][REAL]) + static_cast<float>(X[i][IMAG])*static_cast<float>(X[i][IMAG]));
         if (i>509)
